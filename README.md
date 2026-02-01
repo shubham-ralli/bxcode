@@ -1,101 +1,310 @@
-# BxCode CMS (Laravel Edition)
+# BxCode CMS
 
-A robust, modular Content Management System built on Laravel 10. Designed for flexibility, performance, and ease of use.
+A modern, WordPress-style Content Management System built with Laravel. Features an intuitive admin panel, plugin system, theme support, and one-click installation.
 
-## 🚀 Key Features
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![PHP](https://img.shields.io/badge/PHP-%3E%3D8.1-purple)
+![Laravel](https://img.shields.io/badge/Laravel-10.x-red)
 
-### 🎨 Design & Customization
--   **Theme System**: Fully customizable frontend themes located in `resources/views/themes`.
--   **Plugin Architecture**: Extend core functionality without touching the codebase (`app/Plugins`).
--   **Menu Manager**: Drag-and-drop menu builder with **Custom CSS Classes** and **Target Support** (New Tab vs Same Tab).
+## ✨ Features
 
-### 🖼️ Media Library
--   **Drag & Drop Upload**: Modern upload interface with progress tracking.
--   **Smart Management**: Filter by type (Image, Audio, Video, Document) or Date.
--   **Deep Linking**: Share specific media items via URL (e.g., `?item=123` auto-opens the preview modal).
--   **Metadata**: Auto-detects file sizes, MIME types, and supports custom Titles/Alt Text.
-
-### 👥 User Management
--   **Role-Based Access**: Administrators, Editors, Authors, etc.
--   **Rich Profile Editing**: Integrated WYSIWYG editor for user bios.
--   **Smart Redirects**: Editing your own user redirects to the "My Profile" page.
-
-### ⚡ Admin Experience
--   **Toast Notifications**: Non-intrusive success/error popups.
--   **Dashboard Widgets**: At-a-glance analytics (Total Users, Posts, Media).
--   **Responsive Design**: Mobile-friendly admin panel built with Tailwind CSS.
-
-### 🔧 Technical
--   **SEO Ready**: Built-in meta tag management.
--   **Robust API**: Underlying service architecture for Posts, Media, and Users.
+- 🚀 **One-Click Installation** - WordPress-style setup wizard
+- 📝 **Posts & Pages** - Create and manage content easily
+- 🎨 **Theme System** - Switch themes without code changes
+- 🔌 **Plugin Architecture** - Extend functionality with plugins
+- 👥 **User Management** - Role-based access control
+- 🖼️ **Media Library** - Manage images and files
+- 📱 **Responsive Admin** - Modern, mobile-friendly dashboard
+- 🔍 **SEO Ready** - Built-in SEO meta management
+- 🏷️ **Tags & Categories** - Organize content efficiently
+- 🎯 **Custom Post Types** - Create your own content types
+- 🍔 **Menu Builder** - Visual drag-and-drop menu management
 
 ---
 
-## 🛠️ Installation
+## 📦 Quick Start
 
-### 1. Requirements
--   PHP 8.1+
--   Composer
--   MySQL 8.0+ or MariaDB
-
-### 2. Setup
-Clone the repository and install dependencies:
+### Installation (3 Steps)
 
 ```bash
-git clone https://github.com/your-repo/laravel-cms.git
-cd laravel-cms
-composer install
+# 1. Clone the repository
+git clone https://github.com/shubham-ralli/bxcode.git
+cd bxcode
+
+# 2. Set permissions (Linux/Mac)
+chmod -R 775 storage bootstrap/cache
+
+# 3. Visit in browser
+# Open: http://localhost/bxcode/public
 ```
 
-### 3. Environment
-Configure your database credentials:
+The installer will automatically appear and guide you through:
+- Database configuration
+- Admin account creation
+- Initial setup
 
-```bash
-cp .env.example .env
-nano .env
-# Set DB_DATABASE, DB_USERNAME, DB_PASSWORD
+**That's it!** No `composer install` or manual commands needed.
+
+[📖 Detailed Installation Guide](INSTALLATION.md)
+
+---
+
+## 🎯 How to Use BxCode CMS
+
+### 1️⃣ **Login to Admin Panel**
+
+After installation, login at:
+```
+http://your-site.com/login
 ```
 
-### 4. Database Seeding
-Run the installer to set up tables and create the default admin account:
+Use the admin email and password you created during installation.
+
+### 2️⃣ **Dashboard Overview**
+
+The dashboard shows:
+- Total posts, pages, and users
+- Recent activity
+- Quick action buttons
+
+### 3️⃣ **Creating Content**
+
+#### **Posts**
+1. Go to **Posts** → **Add New**
+2. Enter title and content
+3. Add featured image (optional)
+4. Add tags and categories
+5. Set SEO meta (title, description)
+6. Click **Publish**
+
+#### **Pages**
+1. Go to **Pages** → **Add New**
+2. Enter title and content
+3. Choose page template (if available)
+4. Set parent page (for nested pages)
+5. Click **Publish**
+
+#### **Custom Post Types**
+1. Go to **Post Types** → **Add New**
+2. Define your custom post type (e.g., Products, Portfolio)
+3. Start creating content in your new post type
+
+### 4️⃣ **Media Management**
+
+1. Go to **Media** → **Library**
+2. Click **Upload** to add images/files
+3. Use media in posts by clicking "Set Featured Image" or inserting into content
+
+### 5️⃣ **Building Menus**
+
+1. Go to **Appearance** → **Menus**
+2. Create a new menu
+3. Drag items from the left (Pages, Posts, Custom Links)
+4. Arrange items by dragging
+5. Save menu
+
+### 6️⃣ **Installing Plugins**
+
+1. Go to **Plugins** → **Add New**
+2. Upload plugin ZIP or select from available plugins
+3. Click **Activate**
+4. Configure plugin settings (if needed)
+
+### 7️⃣ **Changing Themes**
+
+1. Go to **Appearance** → **Themes**
+2. Select a theme
+3. Click **Activate**
+4. Customize theme settings (if available)
+
+### 8️⃣ **Managing Users**
+
+1. Go to **Users** → **All Users**
+2. Click **Add New** to create users
+3. Assign roles (Admin, Editor, Author)
+4. Manage permissions
+
+### 9️⃣ **SEO Settings**
+
+For each post/page:
+1. Scroll to **SEO Meta** section
+2. Set custom title and description
+3. Add focus keywords
+4. Configure robots meta (index/noindex)
+
+### 🔟 **Site Settings**
+
+1. Go to **Settings** → **General**
+2. Update:
+   - Site title
+   - Site description
+   - Admin email
+   - Timezone
+   - Default theme
+
+---
+
+## 🚀 Deployment to Production
+
+### Option 1: Traditional Hosting (cPanel/Shared Hosting)
+
+1. **Upload files** via FTP to `public_html/`
+2. **Create database** in cPanel → MySQL Databases
+3. **Visit your domain** - Installer will run automatically
+4. **Complete setup** via web wizard
+
+### Option 2: VPS/Cloud Server
 
 ```bash
-php artisan migrate --seed
+# Clone on server
+git clone https://github.com/shubham-ralli/bxcode.git /var/www/html/
+
+# Set permissions
+sudo chown -R www-data:www-data /var/www/html/
+sudo chmod -R 775 storage bootstrap/cache
+
+# Configure web server (Apache/Nginx) to point to /public directory
+# Visit domain to complete installation
 ```
 
-> **Default Admin:**
-> - **Email:** `admin@example.com`
-> - **Password:** `password`
-
-### 5. Finalize
-Link the storage directory for public image access:
+### Option 3: Deploy from GitHub
 
 ```bash
-php artisan storage:link
+# On your server
+git clone https://github.com/shubham-ralli/bxcode.git
+cd bxcode
+
+# Set permissions for web server
+sudo chown -R www-data:www-data storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+
+# Point web server to /public directory
+# Visit URL to install
 ```
 
 ---
 
-## 📖 Usage Guide
+## 🛠️ Development
 
--   **Admin Panel**: `/lp-admin`
--   **Frontend**: `/` (Home)
+### Local Development Setup
 
-### Managing Menus
-Go to **Appearance > Menus**.
-1.  Create a menu (e.g., "Main Menu").
-2.  Add Pages, Posts, or Custom Links from the left sidebar.
-3.  **Advanced**: Expand a menu item to add a **Custom CSS Class** (e.g., `btn-primary`) or change the **Link Target**.
+```bash
+# Clone repo
+git clone https://github.com/shubham-ralli/bxcode.git
+cd bxcode
 
-### Managing Plugins
-Go to **Plugins** in the sidebar.
--   Upload standard Laravel packages or custom BxCode plugins.
--   Toggle plugins On/Off instanty.
+# Dependencies already included (vendor/ in repo)
+# Just set permissions
+chmod -R 775 storage bootstrap/cache
+
+# Start local server (XAMPP, MAMP, or built-in)
+php -S localhost:8000 -t public
+```
+
+### Creating a Plugin
+
+1. Create folder: `resources/views/plugins/YourPlugin/`
+2. Add `plugin.json`:
+```json
+{
+  "name": "Your Plugin",
+  "description": "Plugin description",
+  "version": "1.0.0",
+  "author": "Your Name"
+}
+```
+3. Add `functions.php` with your plugin code
+4. Activate in admin panel
+
+### Creating a Theme
+
+1. Create folder: `resources/views/themes/your-theme/`
+2. Add required files:
+   - `functions.blade.php` - Theme functions
+   - `index.blade.php` - Main template
+   - `single.blade.php` - Single post
+   - `page.blade.php` - Page template
+3. Activate in **Appearance** → **Themes**
+
+---
+
+## 📋 Requirements
+
+- **PHP:** >= 8.1
+- **MySQL:** >= 5.7 or MariaDB >= 10.3
+- **Web Server:** Apache (with mod_rewrite) or Nginx
+- **PHP Extensions:**
+  - PDO
+  - OpenSSL
+  - Mbstring
+  - Tokenizer
+  - XML
+  - Ctype
+  - JSON
+  - BCMath
+
+---
+
+## 📂 Project Structure
+
+```
+bxcode/
+├── app/                 # Application logic
+│   ├── Http/
+│   │   ├── Controllers/ # Route controllers
+│   │   └── Middleware/  # Middleware
+│   ├── Models/          # Database models
+│   └── Helpers/         # Helper functions
+├── config/              # Configuration files
+├── database/
+│   └── migrations/      # Database migrations
+├── public/              # Web root (point here)
+│   └── theme/          # Public theme assets
+├── resources/
+│   └── views/
+│       ├── admin/      # Admin panel views
+│       ├── plugins/    # Installed plugins
+│       └── themes/     # Installed themes
+├── routes/              # Route definitions
+├── storage/             # Logs, cache, sessions
+└── vendor/              # Composer dependencies (included)
+```
 
 ---
 
 ## 🤝 Contributing
-Contributions are welcome! Please fork the repository and submit a Pull Request.
+
+Contributions welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
+
+---
 
 ## 📄 License
-This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+This project is open-source software.
+
+---
+
+## 🆘 Support
+
+- **Documentation:** [INSTALLATION.md](INSTALLATION.md)
+- **Issues:** [GitHub Issues](https://github.com/shubham-ralli/bxcode/issues)
+
+---
+
+## 🎯 Roadmap
+
+- [ ] Multi-language support
+- [ ] Advanced plugin marketplace
+- [ ] Theme customizer
+- [ ] REST API
+- [ ] GraphQL support
+- [ ] Block editor (Gutenberg-style)
+
+---
+
+**Built with ❤️ using Laravel**
