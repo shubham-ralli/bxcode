@@ -21,9 +21,18 @@ class InstallController extends Controller
             'admin_password' => 'required|min:8',
         ]);
 
-        // Create .env if not exists
-        if (!file_exists(base_path('.env')) && file_exists(base_path('.env.example'))) {
-            copy(base_path('.env.example'), base_path('.env'));
+        // Create .env from .env.example if it doesn't exist
+        if (!file_exists(base_path('.env'))) {
+            if (file_exists(base_path('.env.example'))) {
+                copy(base_path('.env.example'), base_path('.env'));
+                chmod(base_path('.env'), 0666);
+            } else {
+                return back()->with('error', '.env.example file not found');
+            }
+        }
+
+        // Generate APP_KEY if not set
+        if (empty(config('app.key'))) {
             \Artisan::call('key:generate');
         }
 

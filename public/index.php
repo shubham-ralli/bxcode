@@ -43,54 +43,18 @@ require __DIR__ . '/../vendor/autoload.php';
 |
 */
 
-if (!file_exists(__DIR__ . '/../.env')) {
-    // Generate a random APP_KEY
-    $appKey = 'base64:' . base64_encode(random_bytes(32));
-
-    // Create minimal .env to allow Laravel to boot
-    $minimalEnv = "APP_NAME=Laravel
-APP_ENV=local
-APP_KEY={$appKey}
-APP_DEBUG=true
-APP_URL=http://localhost
-
-LOG_CHANNEL=stack
-LOG_LEVEL=debug
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=
-DB_USERNAME=
-DB_PASSWORD=
-
-CACHE_DRIVER=file
-SESSION_DRIVER=file
-";
-
-    file_put_contents(__DIR__ . '/../.env', $minimalEnv);
-    chmod(__DIR__ . '/../.env', 0666);
-}
-
-// Redirect to installer if .env exists but DB is not configured
-if (file_exists(__DIR__ . '/../.env')) {
+// Check for .env and redirect to installer if missing
+$envPath = __DIR__ . '/../.env';
+if (!file_exists($envPath)) {
     $requestUri = $_SERVER['REQUEST_URI'] ?? '';
-
-    // Check if we're not already on the install route
     if (strpos($requestUri, '/install') === false) {
-        // Only redirect if database is not configured
-        // (empty DB_DATABASE means not configured)
-        $envContent = file_get_contents(__DIR__ . '/../.env');
-        if (preg_match('/^DB_DATABASE=\s*$/m', $envContent) || preg_match('/^DB_DATABASE=$/m', $envContent)) {
-            // Get the script name to determine the base path
-            $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-            $basePath = str_replace('/index.php', '', $scriptName);
-            $basePath = str_replace('/public', '', $basePath);
+        // Get the base path for redirect
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $basePath = str_replace('/index.php', '', $scriptName);
+        $basePath = str_replace('/public', '', $basePath);
 
-            // Redirect to install route (relative to current path)
-            header('Location: ' . $basePath . '/public/install');
-            exit;
-        }
+        header('Location: ' . $basePath . '/public/install');
+        exit;
     }
 }
 
