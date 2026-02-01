@@ -47,7 +47,13 @@ if (!file_exists(__DIR__ . '/../.env')) {
     // Check if we're not already on the install route
     $requestUri = $_SERVER['REQUEST_URI'] ?? '';
     if (strpos($requestUri, '/install') === false) {
-        header('Location: /install');
+        // Get the script name to determine the base path
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $basePath = str_replace('/index.php', '', $scriptName);
+        $basePath = str_replace('/public', '', $basePath);
+
+        // Redirect to install route (relative to current path)
+        header('Location: ' . $basePath . '/public/install');
         exit;
     }
 }
