@@ -70,18 +70,27 @@ SESSION_DRIVER=file
 
     file_put_contents(__DIR__ . '/../.env', $minimalEnv);
     chmod(__DIR__ . '/../.env', 0666);
+}
+
+// Redirect to installer if .env exists but DB is not configured
+if (file_exists(__DIR__ . '/../.env')) {
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
 
     // Check if we're not already on the install route
-    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
     if (strpos($requestUri, '/install') === false) {
-        // Get the script name to determine the base path
-        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-        $basePath = str_replace('/index.php', '', $scriptName);
-        $basePath = str_replace('/public', '', $basePath);
+        // Only redirect if database is not configured
+        // (empty DB_DATABASE means not configured)
+        $envContent = file_get_contents(__DIR__ . '/../.env');
+        if (preg_match('/^DB_DATABASE=\s*$/m', $envContent) || preg_match('/^DB_DATABASE=$/m', $envContent)) {
+            // Get the script name to determine the base path
+            $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+            $basePath = str_replace('/index.php', '', $scriptName);
+            $basePath = str_replace('/public', '', $basePath);
 
-        // Redirect to install route (relative to current path)
-        header('Location: ' . $basePath . '/public/install');
-        exit;
+            // Redirect to install route (relative to current path)
+            header('Location: ' . $basePath . '/public/install');
+            exit;
+        }
     }
 }
 
