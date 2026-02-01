@@ -38,8 +38,14 @@ class PluginServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Skip plugin loading if running installer or nov .env
+        // Skip plugin loading if running installer or no .env or DB not configured
         if (request()->is('install') || request()->is('install/*') || !file_exists(base_path('.env'))) {
+            return;
+        }
+
+        // Also skip if database is not configured yet
+        $dbName = config('database.connections.mysql.database');
+        if (empty($dbName)) {
             return;
         }
 

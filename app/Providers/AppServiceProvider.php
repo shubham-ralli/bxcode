@@ -32,6 +32,12 @@ class AppServiceProvider extends ServiceProvider
             return;
         }
 
+        // Also skip if database is not configured yet
+        $dbName = config('database.connections.mysql.database');
+        if (empty($dbName)) {
+            return;
+        }
+
         // Register Admin Components path
         \Illuminate\Support\Facades\Blade::anonymousComponentPath(resource_path('views/admin/components'), 'admin');
 
