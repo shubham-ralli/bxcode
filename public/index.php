@@ -35,15 +35,39 @@ require __DIR__ . '/../vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
-| Check for .env (Redirect to Installer if Missing)
+| Check for .env (Create Minimal Version if Missing)
 |--------------------------------------------------------------------------
 |
-| If .env doesn't exist, redirect to installer BEFORE Laravel boots
-| to avoid 500 errors from missing APP_KEY
+| If .env doesn't exist, create a minimal version to allow Laravel to boot
+| This prevents 500 errors when accessing /install route
 |
 */
 
 if (!file_exists(__DIR__ . '/../.env')) {
+    // Create minimal .env to allow Laravel to boot
+    $minimalEnv = "APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+LOG_CHANNEL=stack
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=
+DB_USERNAME=
+DB_PASSWORD=
+
+CACHE_DRIVER=file
+SESSION_DRIVER=file
+";
+
+    file_put_contents(__DIR__ . '/../.env', $minimalEnv);
+    chmod(__DIR__ . '/../.env', 0666);
+
     // Check if we're not already on the install route
     $requestUri = $_SERVER['REQUEST_URI'] ?? '';
     if (strpos($requestUri, '/install') === false) {
