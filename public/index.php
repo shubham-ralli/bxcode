@@ -44,10 +44,13 @@ require __DIR__ . '/../vendor/autoload.php';
 */
 
 if (!file_exists(__DIR__ . '/../.env')) {
+    // Generate a random APP_KEY
+    $appKey = 'base64:' . base64_encode(random_bytes(32));
+
     // Create minimal .env to allow Laravel to boot
     $minimalEnv = "APP_NAME=Laravel
 APP_ENV=local
-APP_KEY=
+APP_KEY={$appKey}
 APP_DEBUG=true
 APP_URL=http://localhost
 
