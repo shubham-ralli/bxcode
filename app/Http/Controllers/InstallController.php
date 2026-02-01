@@ -8,6 +8,20 @@ class InstallController extends Controller
 {
     public function index()
     {
+        // Create .env from .env.example if it doesn't exist
+        if (!file_exists(base_path('.env'))) {
+            if (file_exists(base_path('.env.example'))) {
+                copy(base_path('.env.example'), base_path('.env'));
+                chmod(base_path('.env'), 0666);
+
+                // Generate APP_KEY immediately
+                \Artisan::call('key:generate');
+
+                // Reload configuration
+                \Artisan::call('config:clear');
+            }
+        }
+
         return view('install.index');
     }
 
