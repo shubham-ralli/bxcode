@@ -33,6 +33,25 @@ if (file_exists($maintenance = __DIR__ . '/../storage/framework/maintenance.php'
 
 require __DIR__ . '/../vendor/autoload.php';
 
+/*
+|--------------------------------------------------------------------------
+| Check for .env (Redirect to Installer if Missing)
+|--------------------------------------------------------------------------
+|
+| If .env doesn't exist, redirect to installer BEFORE Laravel boots
+| to avoid 500 errors from missing APP_KEY
+|
+*/
+
+if (!file_exists(__DIR__ . '/../.env')) {
+    // Check if we're not already on the install route
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    if (strpos($requestUri, '/install') === false) {
+        header('Location: /install');
+        exit;
+    }
+}
+
 // Manual Plugin Autoloader (Fixes "Class not found" without dump-autoload)
 spl_autoload_register(function ($class) {
     if (str_starts_with($class, 'Plugins\\')) {
