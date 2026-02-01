@@ -45,33 +45,70 @@ Everything is automated like WordPress!
 
 ---
 
-## Manual .env Setup (Optional)
+## Manual .env Setup (Alternative to Web Installer)
 
-If you prefer to configure manually instead of using the installer:
+If you prefer to configure manually instead of using the web installer:
 
-1. Copy the example environment file:
+### 1. Create .env file
 ```bash
 cp .env.example .env
 ```
 
-2. Edit `.env` and update:
+### 2. Edit .env and update database credentials
+```bash
+nano .env  # or use any text editor
+```
+
+Update these lines:
 ```env
 DB_DATABASE=your_database_name
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
-3. Generate application key:
+### 3. Generate application key
 ```bash
 php artisan key:generate
 ```
 
-4. Run migrations:
+### 4. Run migrations
 ```bash
 php artisan migrate
 ```
 
-5. Create admin user manually via database or seeder
+### 5. Create admin user (run in terminal)
+```bash
+php artisan tinker
+```
+Then in tinker console:
+```php
+\App\Models\User::create([
+    'name' => 'Admin',
+    'email' => 'admin@example.com',
+    'password' => bcrypt('your-password')
+]);
+exit
+```
+
+---
+
+## Troubleshooting
+
+### Permission Issues
+If you get permission errors with chmod, use sudo:
+```bash
+sudo chmod -R 775 storage bootstrap/cache
+sudo chown -R www-data:www-data storage bootstrap/cache  # Linux/Ubuntu
+# OR
+sudo chown -R _www:_www storage bootstrap/cache  # macOS
+# OR  
+sudo chown -R daemon:daemon storage bootstrap/cache  # XAMPP
+```
+
+For XAMPP on Mac specifically:
+```bash
+sudo chmod -R 777 storage bootstrap/cache  # Less secure but works for local dev
+```
 
 ---
 
