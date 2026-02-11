@@ -349,7 +349,7 @@ if (!function_exists('supports_meta_box')) {
             return in_array($feature, $defaultSupports);
         }
         if ($type === 'page') {
-            $pageSupports = ['title', 'editor', 'featured_image', 'author', 'page_attributes'];
+            $pageSupports = ['title', 'editor', 'featured_image', 'author', 'page_attributes', 'excerpt'];
             return in_array($feature, $pageSupports);
         }
 

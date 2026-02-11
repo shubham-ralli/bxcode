@@ -35,7 +35,7 @@
             // Standard Post/Page defaults
             $enabledSupports = $defaultSupports;
             if ($typeInfo === 'page') {
-                $enabledSupports = ['title', 'editor', 'featured_image', 'author', 'page-attributes']; // Pages usually don't have excerpt/tags/categories by default in WP, but strict parity optional
+                $enabledSupports = ['title', 'editor', 'featured_image', 'author', 'page-attributes', 'excerpt']; // Pages usually don't have excerpt/tags/categories by default in WP, but strict parity optional
             }
         }
     @endphp

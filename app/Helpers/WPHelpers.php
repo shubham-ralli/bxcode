@@ -283,6 +283,7 @@ function walk_nav_menu_tree($items, $args)
             } else {
                 // For nested dropdowns
                 $classes[] = 'dropdown-submenu';
+                $classes[] = 'dropdown';
             }
         }
 
