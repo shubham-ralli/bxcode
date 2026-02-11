@@ -10,9 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->timestamp('published_at')->nullable()->after('status');
-        });
+        if (!Schema::hasColumn('posts', 'published_at')) {
+            Schema::table('posts', function (Blueprint $table) {
+                $table->timestamp('published_at')->nullable()->after('status');
+            });
+        }
     }
 
     /**

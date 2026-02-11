@@ -27,8 +27,14 @@ class CheckInstalled
         try {
             if (!empty($dbName) && $dbName !== 'forge' && $dbName !== 'laravel') {
                 // Try to check if database and users table exists
+                // Try to check if database and users table exists AND has data (Deep Check)
                 \DB::connection()->getPdo();
-                $dbConfigured = \Schema::hasTable('users');
+                if (\Schema::hasTable('users') && \Schema::hasTable('settings')) {
+                    // Verifying data exists to prevent infinite loop on failed/partial installs
+                    $userCount = \DB::table('users')->count();
+                    $settingCount = \DB::table('settings')->count();
+                    $dbConfigured = ($userCount > 0 && $settingCount > 0);
+                }
             }
         } catch (\Exception $e) {
             // Database not configured or not accessible

@@ -25,6 +25,21 @@ class PublishedScope implements Scope
             return;
         }
 
+        // Check if column exists (Handle pending migrations)
+        // Cache per request to minimize DB calls
+        static $hasPublishedAt;
+        if ($hasPublishedAt === null) {
+            try {
+                $hasPublishedAt = \Illuminate\Support\Facades\Schema::hasColumn('posts', 'published_at');
+            } catch (\Throwable $e) {
+                $hasPublishedAt = false;
+            }
+        }
+
+        if (!$hasPublishedAt) {
+            return;
+        }
+
         // Guest logic:
         // Show only if published_at is NULL (interpreted as immediate) OR published_at <= NOW
         $builder->where(function ($query) {

@@ -10,16 +10,35 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('first_name')->nullable()->after('name');
-            $table->string('last_name')->nullable()->after('first_name');
-            $table->string('role')->default('subscriber')->after('email'); // subscriber, contributor, author, editor, administrator
-            $table->text('bio')->nullable()->after('password');
-            $table->unsignedBigInteger('profile_image_id')->nullable()->after('bio');
+        if (!Schema::hasColumn('users', 'first_name')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('first_name')->nullable()->after('name');
+            });
+        }
 
-            // Optional: Foreign key constraint if media table is guaranteed to exist
-            // $table->foreign('profile_image_id')->references('id')->on('media')->onDelete('set null');
-        });
+        if (!Schema::hasColumn('users', 'last_name')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('last_name')->nullable()->after('first_name');
+            });
+        }
+
+        if (!Schema::hasColumn('users', 'role')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('role')->default('subscriber')->after('email');
+            });
+        }
+
+        if (!Schema::hasColumn('users', 'bio')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->text('bio')->nullable()->after('password');
+            });
+        }
+
+        if (!Schema::hasColumn('users', 'profile_image_id')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->unsignedBigInteger('profile_image_id')->nullable()->after('bio');
+            });
+        }
     }
 
     /**

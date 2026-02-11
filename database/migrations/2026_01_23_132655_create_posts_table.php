@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->longText('content')->nullable();
             $table->string('type')->default('post');
             $table->string('status')->default('draft');
+            $table->timestamp('published_at')->nullable();
             $table->unsignedBigInteger('author_id');
             $table->string('featured_image')->nullable();
             $table->timestamps();
