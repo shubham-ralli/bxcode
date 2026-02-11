@@ -47,17 +47,25 @@ class InstallController extends Controller
             // If we reached here, connection is successful!
 
             // 2. Ensure .env exists
+            // 2. Ensure .env exists
             if (!file_exists(base_path('.env')) && file_exists(base_path('.env.example'))) {
                 copy(base_path('.env.example'), base_path('.env'));
 
-                // Generate APP_KEY if not set
-                $key = 'base64:' . base64_encode(random_bytes(32));
+                // Use temporary key if available to preserve session, otherwise generate new
+                $tempKeyFile = storage_path('app/installation_key');
+                if (file_exists($tempKeyFile)) {
+                    $key = trim(file_get_contents($tempKeyFile));
+                } else {
+                    $key = 'base64:' . base64_encode(random_bytes(32));
+                }
+
                 $this->updateEnv(['APP_KEY' => $key]);
             }
 
             // 3. Update .env with database credentials
             $this->updateEnv([
                 'APP_URL' => $request->root(),
+                'DB_HOST' => '127.0.0.1', // Force TCP connection to avoid socket issues on localhost
                 'DB_DATABASE' => $request->db_name,
                 'DB_USERNAME' => $request->db_username,
                 'DB_PASSWORD' => $request->db_password ?? '',
@@ -65,6 +73,7 @@ class InstallController extends Controller
 
             // 4. Configure default database connection for migrations
             config([
+                'database.connections.mysql.host' => '127.0.0.1',
                 'database.connections.mysql.database' => $request->db_name,
                 'database.connections.mysql.username' => $request->db_username,
                 'database.connections.mysql.password' => $request->db_password ?? '',

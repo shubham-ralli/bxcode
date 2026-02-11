@@ -14,7 +14,11 @@ if (!function_exists('get_active_theme')) {
         // Avoid DB call if possible or cache it
         // Check for Setting model class existence to be safe during install
         if (class_exists('App\Models\Setting')) {
-            return \App\Models\Setting::get('active_theme', 'bxcode-theme');
+            try {
+                return \App\Models\Setting::get('active_theme', 'bxcode-theme');
+            } catch (\Throwable $e) {
+                return 'bxcode-theme';
+            }
         }
         return 'bxcode-theme';
     }
@@ -244,7 +248,7 @@ if (!function_exists('get_admin_prefix')) {
             if (class_exists('App\Models\Setting')) {
                 return \App\Models\Setting::get('admin_path', config('cms.admin_path', 'bx-admin'));
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback if DB connection fails
         }
         return config('cms.admin_path', 'bx-admin');
