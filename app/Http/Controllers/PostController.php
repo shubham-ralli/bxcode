@@ -146,6 +146,9 @@ class PostController extends Controller
 
         if ($publishedAt && \Carbon\Carbon::parse($publishedAt)->isFuture() && in_array($status, ['publish', 'scheduled'])) {
             $status = 'scheduled';
+        } elseif ($status === 'publish' && empty($publishedAt)) {
+            // If publishing immediately without date, set to NOW
+            $publishedAt = now();
         }
 
         $post = Post::create([
@@ -259,6 +262,15 @@ class PostController extends Controller
 
         if ($publishedAt && \Carbon\Carbon::parse($publishedAt)->isFuture() && in_array($status, ['publish', 'scheduled'])) {
             $status = 'scheduled';
+        } elseif ($status === 'publish' && empty($publishedAt) && empty($post->published_at)) {
+            // If publishing now (transition from draft) and no date set, set NOW.
+            // But if already published, keep original date? OR update to now?
+            // Standard WP behavior: if you click update, it keeps original date unless you edit it.
+            // But if it was draft and now publish -> set to now.
+            $publishedAt = now();
+        } elseif ($status === 'publish' && empty($publishedAt) && !empty($post->published_at)) {
+            // Keep existing date if not cleared
+            $publishedAt = $post->published_at;
         }
 
         $post->update([
