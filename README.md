@@ -1,101 +1,78 @@
-# BxCode CMS (Laravel Edition)
+# BxCode CMS
 
-A robust, modular Content Management System built on Laravel 10. Designed for flexibility, performance, and ease of use.
+A powerful and flexible Content Management System built with Laravel.
 
-## 🚀 Key Features
+## Installation Guide
 
-### 🎨 Design & Customization
--   **Theme System**: Fully customizable frontend themes located in `resources/views/themes`.
--   **Plugin Architecture**: Extend core functionality without touching the codebase (`app/Plugins`).
--   **Menu Manager**: Drag-and-drop menu builder with **Custom CSS Classes** and **Target Support** (New Tab vs Same Tab).
+Follow these steps to install and run BxCode CMS on your local machine.
 
-### 🖼️ Media Library
--   **Drag & Drop Upload**: Modern upload interface with progress tracking.
--   **Smart Management**: Filter by type (Image, Audio, Video, Document) or Date.
--   **Deep Linking**: Share specific media items via URL (e.g., `?item=123` auto-opens the preview modal).
--   **Metadata**: Auto-detects file sizes, MIME types, and supports custom Titles/Alt Text.
+### Prerequisites
 
-### 👥 User Management
--   **Role-Based Access**: Administrators, Editors, Authors, etc.
--   **Rich Profile Editing**: Integrated WYSIWYG editor for user bios.
--   **Smart Redirects**: Editing your own user redirects to the "My Profile" page.
+- PHP >= 8.1
+- Composer
+- MySQL or compatible database server
+- Node.js & NPM (for compiling assets)
 
-### ⚡ Admin Experience
--   **Toast Notifications**: Non-intrusive success/error popups.
--   **Dashboard Widgets**: At-a-glance analytics (Total Users, Posts, Media).
--   **Responsive Design**: Mobile-friendly admin panel built with Tailwind CSS.
+### Step 1: Clone the Repository
 
-### 🔧 Technical
--   **SEO Ready**: Built-in meta tag management.
--   **Robust API**: Underlying service architecture for Posts, Media, and Users.
-
----
-
-## 🛠️ Installation
-
-### 1. Requirements
--   PHP 8.1+
--   Composer
--   MySQL 8.0+ or MariaDB
-
-### 2. Setup
-Clone the repository and install dependencies:
+Download the project source code using Git.
 
 ```bash
-git clone https://github.com/your-repo/laravel-cms.git
-cd laravel-cms
+git clone https://github.com/shubham-ralli/bxcode.git
+cd bxcode
+```
+
+### Step 2: Install Dependencies
+
+Install the necessary PHP packages using Composer.
+
+```bash
 composer install
 ```
 
-### 3. Environment
-Configure your database credentials:
+### Step 3: Configure Environment
+
+We need to copy the example environment file.
 
 ```bash
 cp .env.example .env
-nano .env
-# Set DB_DATABASE, DB_USERNAME, DB_PASSWORD
 ```
 
-### 4. Database Seeding
-Run the installer to set up tables and create the default admin account:
+or on Windows:
+
+```cmd
+copy .env.example .env
+```
+
+### Step 4: Generate Application Key
+
+Generate the encryption key required by Laravel.
 
 ```bash
-php artisan migrate --seed
+php artisan key:generate
 ```
 
-> **Default Admin:**
-> - **Email:** `admin@example.com`
-> - **Password:** `password`
+### Step 5: Run the Installer
 
-### 5. Finalize
-Link the storage directory for public image access:
+Start the local development server.
 
 ```bash
-php artisan storage:link
+php artisan serve
 ```
 
----
+Now, open your browser and navigate to:
 
-## 📖 Usage Guide
+[http://127.0.0.1:8000/install](http://127.0.0.1:8000/install)
 
--   **Admin Panel**: `/lp-admin`
--   **Frontend**: `/` (Home)
+Follow the on-screen instructions to complete the installation:
+1. Enter your Database credentials.
+2. Create your Admin account.
+3. The installer will automatically run migrations and set up the application for you.
 
-### Managing Menus
-Go to **Appearance > Menus**.
-1.  Create a menu (e.g., "Main Menu").
-2.  Add Pages, Posts, or Custom Links from the left sidebar.
-3.  **Advanced**: Expand a menu item to add a **Custom CSS Class** (e.g., `btn-primary`) or change the **Link Target**.
+### Alternate Method (Using XAMPP/MAMP)
 
-### Managing Plugins
-Go to **Plugins** in the sidebar.
--   Upload standard Laravel packages or custom BxCode plugins.
--   Toggle plugins On/Off instanty.
-
----
-
-## 🤝 Contributing
-Contributions are welcome! Please fork the repository and submit a Pull Request.
-
-## 📄 License
-This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. Clone the project into your `htdocs` folder.
+2. Run `composer install`.
+3. Create a database in phpMyAdmin (e.g., `bxcode`).
+4. Navigate to `http://localhost/bxcode/install` in your browser.
+5. Follow the installer instructions.
