@@ -44,7 +44,16 @@ or on Windows:
 copy .env.example .env
 ```
 
-### Step 4: Generate Application Key
+### Step 4: Configure Permissions (Mac/Linux only)
+
+If you are on Mac or Linux, you may need to grant write permissions to the web server.
+
+```bash
+chmod -R 777 storage bootstrap/cache
+chmod 777 .env
+```
+
+### Step 5: Generate Application Key
 
 Generate the encryption key required by Laravel.
 
