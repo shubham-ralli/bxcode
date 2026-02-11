@@ -1,100 +1,130 @@
 {!! get_header() !!}
 
-<article class="article">
-    <div class="article-header">
-        <div class="container-narrow">
-            <div class="article-meta">
-                @if($post->categories && $post->categories->count() > 0)
-                    <a href="{{ url('/category/' . $post->categories->first()->slug) }}" class="article-category">
-                        {{ $post->categories->first()->name }}
-                    </a>
-                @endif
-                <span class="article-date">
-                    {{ $post->published_at ? $post->published_at->format('F d, Y') : $post->created_at->format('F d, Y') }}
-                </span>
-                @php
-                    $wordCount = str_word_count(strip_tags($content));
-                    $readTime = ceil($wordCount / 200); // Average reading speed: 200 words/minute
-                @endphp
-                <span class="article-read-time">{{ $readTime }} min read</span>
-            </div>
-            <h1 class="article-title">{{ $post->title }}</h1>
-            @if(!empty($post->excerpt))
-                <p class="article-subtitle">
-                    {{ $post->excerpt }}
-                </p>
-            @endif
+<main class="main">
 
-            <div class="article-author">
-                <img src="{{ $post->author->avatar_url }}"
-                    alt="{{ $post->author->display_name ?? $post->author->name ?? 'Author' }}" class="author-avatar">
-                <div class="author-info">
-                    <div class="author-name">{{ $post->author->display_name ?? $post->author->name ?? 'Author' }}</div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="container">
+        <div class="row">
 
-    <!-- Article Image -->
-    @if($post->featured_image)
-        <div class="article-featured-image">
-            <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}">
-        </div>
-    @endif
+            <div class="col-lg-8">
 
-    <!-- Article Content -->
-    <div class="article-content">
-        <div class="container-narrow">
-            <div class="article-body">
-                {!! $content !!}
-            </div>
+                <!-- Blog Details Section -->
+                <section id="blog-details" class="blog-details section">
+                    <div class="container">
 
-            <!-- Author Card -->
-            <div class="author-card">
-                <img src="{{ $post->author->avatar_url }}" alt="{{ $post->author->display_name ?? 'Author' }}"
-                    class="author-card-avatar">
-                <div class="author-card-content">
-                    <h3 class="author-card-name">{{ $post->author->display_name ?? $post->author->name ?? 'Author' }}
-                    </h3>
-                    <p class="author-card-bio">{{ strip_tags($post->author->bio) }}</p>
-                </div>
-            </div>
+                        <article class="article">
 
-            <!-- Related Posts -->
-            @php
-                // Get related posts - recent published posts excluding current
-                $relatedPosts = \App\Models\Post::where('status', 'publish')
-                    ->where('id', '!=', $post->id)
-                    ->latest('published_at')
-                    ->limit(3)
-                    ->get();
-            @endphp
-
-            @if($relatedPosts->count() > 0)
-                <section class="related-posts">
-                    <h2 class="section-title">Related Articles</h2>
-                    <div class="related-grid">
-                        @foreach($relatedPosts as $relatedPost)
-                            <article class="related-card">
-                                @if($relatedPost->featured_image_url)
-                                    <img src="{{ $relatedPost->featured_image_url }}" alt="{{ $relatedPost->title }}">
-                                @else
-                                    <img src="https://placehold.co/400x250/e8e6e1/666666?text={{ urlencode($relatedPost->title) }}"
-                                        alt="{{ $relatedPost->title }}">
-                                @endif
-                                <div class="related-content">
-                                    @if($relatedPost->categories && $relatedPost->categories->count() > 0)
-                                        <span class="related-category">{{ $relatedPost->categories->first()->name }}</span>
-                                    @endif
-                                    <h3><a href="{{ $relatedPost->url }}">{{ $relatedPost->title }}</a></h3>
+                            <div class="hero-img">
+                                <img src="{{ $post->featured_image_url }}" alt="Featured blog image" class="img-fluid"
+                                    loading="lazy">
+                                <div class="meta-overlay">
+                                    <div class="meta-categories">
+                                        <a href="#" class="category">Web Development</a>
+                                        <span class="divider">•</span>
+                                        <span class="reading-time"><i class="bi bi-clock"></i> 6 min read</span>
+                                    </div>
                                 </div>
-                            </article>
-                        @endforeach
+                            </div>
+
+                            <div class="article-content">
+                                <div class="content-header">
+                                    <h1 class="title">{{ $post->title }}</h1>
+
+                                    @if(!empty($post->excerpt))
+                                        <p class="article-subtitle">
+                                            {{ $post->excerpt }}
+                                        </p>
+                                    @endif
+
+                                    <div class="author-info">
+                                        <div class="author-details">
+                                            <img src="{{ $post->author->avatar_url }}" alt="Author" class="author-img">
+                                            <div class="info">
+                                                <h4>{{ $post->author->display_name ?? $post->author->name ?? 'Author' }}
+                                                </h4>
+                                                <span class="role">{{ $post->author->role ?? 'Author' }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="post-meta">
+                                            <span class="date"><i class="bi bi-calendar3"></i>
+                                                {{ $post->published_at->format('F d, Y') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="content">
+                                    {!! $content !!}
+                                </div>
+                            </div>
+
+                        </article>
+
                     </div>
-                </section>
-            @endif
+                </section><!-- /Blog Details Section -->
+
+                <!-- Blog Author Section -->
+                <section id="blog-author" class="blog-author section">
+
+                    <div class="container">
+                        <div class="author-box">
+                            <div class="row align-items-center">
+                                <div class="col-lg-3 col-md-4 text-center">
+                                    <img src="assets/img/person/person-f-12.webp" class="author-img rounded-circle"
+                                        alt="" loading="lazy">
+
+                                    <div class="author-social-links mt-3">
+                                        <a href="https://twitter.com/#" class="twitter"><i
+                                                class="bi bi-twitter-x"></i></a>
+                                        <a href="https://linkedin.com/#" class="linkedin"><i
+                                                class="bi bi-linkedin"></i></a>
+                                        <a href="https://github.com/#" class="github"><i class="bi bi-github"></i></a>
+                                        <a href="https://facebook.com/#" class="facebook"><i
+                                                class="bi bi-facebook"></i></a>
+                                        <a href="https://instagram.com/#" class="instagram"><i
+                                                class="bi bi-instagram"></i></a>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-9 col-md-8">
+                                    <div class="author-content">
+                                        <h3 class="author-name">
+                                            {{ $post->author->display_name ?? $post->author->name ?? 'Author' }}
+                                        </h3>
+                                        <span class="author-title">{{ $post->author->role ?? 'Author' }}</span>
+
+                                        <div class="author-bio mt-3">
+                                            {{ strip_tags($post->author->bio) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section><!-- /Blog Author Section -->
+
+
+
+            </div>
+
+            <div class="col-lg-4 sidebar">
+
+                <div class="search-widget widget-item">
+
+                    <h3 class="widget-title">Search</h3>
+                    <form action="">
+                        <input type="text">
+                        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                    </form>
+
+                </div>
+
+
+
+            </div>
+
         </div>
     </div>
-</article>
+
+</main>
 
 {!! get_footer() !!}

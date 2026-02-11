@@ -98,17 +98,16 @@ class MediaController extends Controller
             $filename = Str::slug($originalName) . '.' . $extension;
 
             $counter = 1;
-            $counter = 1;
-            while (Storage::disk('public')->exists("{$directory}/{$filename}")) {
+            while (Storage::disk('uploads')->exists("{$directory}/{$filename}")) {
                 $filename = Str::slug($originalName) . '-' . $counter . '.' . $extension;
                 $counter++;
             }
 
-            $path = $file->storeAs($directory, $filename, 'public');
+            $path = $file->storeAs($directory, $filename, 'uploads');
 
             $media = Media::create([
                 'filename' => $filename,
-                'path' => '/public/storage/' . $path,
+                'path' => '/uploads/' . $directory . '/' . $filename,
                 'mime_type' => $file->getMimeType(),
                 'size' => $file->getSize(),
                 'title' => $originalName,
@@ -174,22 +173,22 @@ class MediaController extends Controller
             // Reusing logic from store, but simplified for API
             $year = date('Y');
             $month = date('m');
-            $directory = "uploads/{$year}/{$month}";
+            $directory = "{$year}/{$month}";
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $extension = $file->getClientOriginalExtension();
             $filename = Str::slug($originalName) . '.' . $extension;
 
             $counter = 1;
-            while (Storage::disk('public')->exists("{$directory}/{$filename}")) {
+            while (Storage::disk('uploads')->exists("{$directory}/{$filename}")) {
                 $filename = Str::slug($originalName) . '-' . $counter . '.' . $extension;
                 $counter++;
             }
 
-            $path = $file->storeAs($directory, $filename, 'public');
+            $path = $file->storeAs($directory, $filename, 'uploads');
 
             $media = Media::create([
                 'filename' => $filename,
-                'path' => '/public/storage/' . $path,
+                'path' => '/uploads/' . $directory . '/' . $filename,
                 'mime_type' => $file->getMimeType(),
                 'size' => $file->getSize(),
                 'title' => $originalName,
@@ -240,10 +239,16 @@ class MediaController extends Controller
     private function deleteMediaFile($media)
     {
         // Remove valid path prefix to delete from storage
-        $storagePath = str_replace(['/public/storage/', '/storage/'], '', $media->path);
+        $relativePath = str_replace(['/uploads/', 'uploads/'], '', $media->path);
 
-        if (Storage::disk('public')->exists($storagePath)) {
-            Storage::disk('public')->delete($storagePath);
+        if (Storage::disk('uploads')->exists($relativePath)) {
+            Storage::disk('uploads')->delete($relativePath);
+        }
+
+        // Also try old 'public' disk for legacy files
+        $oldPath = str_replace(['/public/storage/', '/storage/'], '', $media->path);
+        if (Storage::disk('public')->exists($oldPath)) {
+            Storage::disk('public')->delete($oldPath);
         }
     }
 }
