@@ -33,8 +33,8 @@
         },
         "files": [
             "app/Helpers/CoreHelpers.php",
-            "app/Helpers/WPHelpers.php",
-            "app/Helpers/plugin_helpers.php"
+            "app/Helpers/plugin_helpers.php",
+            "app/Helpers/WPHelpers.php"
         ]
     },
     "autoload-dev": {

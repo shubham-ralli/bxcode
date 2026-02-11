@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\View;
 use App\Services\ShortcodeService;
 
+require_once __DIR__ . '/plugin_helpers.php';
+
 
 
 if (!function_exists('add_shortcode')) {
@@ -454,7 +456,6 @@ if (!function_exists('bx_posts_pagination')) {
     }
 }
 
-/*
 add_action('bx_head', function () {
     // 1. Trigger Enqueue Hook so themes can register scripts
     do_action('bx_enqueue_scripts');
@@ -466,16 +467,13 @@ add_action('bx_head', function () {
         \App\Services\AssetService::printHeadScripts();
     }
 }, 1);
-*/
 
-/*
 add_action('bx_footer', function () {
     // Print Footer Scripts
     if (class_exists('App\Services\AssetService')) {
         \App\Services\AssetService::printFooterScripts();
     }
 }, 20);
-*/
 
 if (!function_exists('get_search_form')) {
     /**
