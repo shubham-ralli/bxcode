@@ -21,40 +21,95 @@ class InstallController extends Controller
             'admin_password' => 'required|min:8',
         ]);
 
-        // Create .env if not exists
-        if (!file_exists(base_path('.env')) && file_exists(base_path('.env.example'))) {
-            copy(base_path('.env.example'), base_path('.env'));
+        try {
+            // 1. Test Database Connection FIRST
+            // We use a temporary connection configuration to test before writing to .env
+            $tempConfig = [
+                'driver' => 'mysql',
+                'host' => '127.0.0.1', // Assuming localhost, or get from request if fields added
+                'port' => '3306',
+                'database' => $request->db_name,
+                'username' => $request->db_username,
+                'password' => $request->db_password ?? '',
+                'charset' => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+                'prefix' => '',
+                'strict' => true,
+                'engine' => null,
+            ];
+
+            // Set the temp config to a new connection name 'install_test'
+            config(['database.connections.install_test' => $tempConfig]);
+
+            // Try to connect
+            \DB::connection('install_test')->getPdo();
+
+            // If we reached here, connection is successful!
+
+            // 2. Ensure .env exists
+            if (!file_exists(base_path('.env')) && file_exists(base_path('.env.example'))) {
+                copy(base_path('.env.example'), base_path('.env'));
+
+                // Generate APP_KEY if not set
+                $key = 'base64:' . base64_encode(random_bytes(32));
+                $this->updateEnv(['APP_KEY' => $key]);
+            }
+
+            // 3. Update .env with database credentials
+            $this->updateEnv([
+                'APP_URL' => $request->root(),
+                'DB_DATABASE' => $request->db_name,
+                'DB_USERNAME' => $request->db_username,
+                'DB_PASSWORD' => $request->db_password ?? '',
+            ]);
+
+            // 4. Configure default database connection for migrations
+            config([
+                'database.connections.mysql.database' => $request->db_name,
+                'database.connections.mysql.username' => $request->db_username,
+                'database.connections.mysql.password' => $request->db_password ?? '',
+            ]);
+            \DB::purge('mysql');
+            \DB::reconnect('mysql');
+
+            // 5. Run migrations
+            \Artisan::call('migrate', ['--force' => true]);
+
+            // 6. Create Admin User
+            \App\Models\User::create([
+                'name' => 'Admin',
+                'email' => $request->admin_email,
+                'password' => \Hash::make($request->admin_password),
+            ]);
+
+            return redirect()->route('login')->with('success', 'Installation completed successfully!');
+
+        } catch (\PDOException $e) {
+            $errorCode = $e->getCode();
+            $errorMessage = 'Database Connection Error: ';
+
+            if ($errorCode == 1045) {
+                $errorMessage .= 'Invalid Database Username or Password. Please check your credentials.';
+            } elseif ($errorCode == 1049) {
+                $errorMessage .= 'Database "' . $request->db_name . '" does not exist. Please create it first.';
+            } else {
+                // Try to parse the SQL state error for more info if code is generic
+                if (str_contains($e->getMessage(), 'Access denied')) {
+                    $errorMessage .= 'Invalid Database Username or Password.';
+                } elseif (str_contains($e->getMessage(), 'Unknown database')) {
+                    $errorMessage .= 'Database "' . $request->db_name . '" does not exist.';
+                } else {
+                    $errorMessage .= $e->getMessage();
+                }
+            }
+
+            return back()->withErrors(['db_error' => $errorMessage])->withInput();
+        } catch (\Exception $e) {
+            // If installation fails for other reasons
+            return back()->withErrors([
+                'error' => 'Installation failed: ' . $e->getMessage()
+            ])->withInput();
         }
-
-        // Update .env
-        $this->updateEnv([
-            'APP_URL' => $request->root(),
-            'DB_DATABASE' => $request->db_name,
-            'DB_USERNAME' => $request->db_username,
-            'DB_PASSWORD' => $request->db_password ?? '',
-        ]);
-
-        // Reconnect DB
-        config([
-            'database.connections.mysql.database' => $request->db_name,
-            'database.connections.mysql.username' => $request->db_username,
-            'database.connections.mysql.password' => $request->db_password ?? '',
-        ]);
-        \DB::purge('mysql');
-        \DB::reconnect('mysql');
-
-        // Migrate
-        \Artisan::call('migrate', ['--force' => true]);
-
-        // Create Admin User
-        \App\Models\User::create([
-            'name' => 'Admin',
-            'email' => $request->admin_email,
-            'password' => \Hash::make($request->admin_password),
-        ]);
-
-
-        return redirect()->route('login');
     }
 
     protected function updateEnv($data)
@@ -63,11 +118,17 @@ class InstallController extends Controller
         if (file_exists($path)) {
             $env = file_get_contents($path);
             foreach ($data as $key => $value) {
-                $value = '"' . trim($value) . '"'; // Quote the value
-                if (strpos($env, $key . '=') !== false) {
-                    $env = preg_replace("/^{$key}=.*/m", "{$key}={$value}", $env);
+                // Don't quote APP_KEY if it starts with base64:
+                if ($key === 'APP_KEY' || strpos($value, 'base64:') === 0) {
+                    $formattedValue = $value;
                 } else {
-                    $env .= "\n{$key}={$value}";
+                    $formattedValue = '"' . trim($value) . '"';
+                }
+
+                if (strpos($env, $key . '=') !== false) {
+                    $env = preg_replace("/^{$key}=.*/m", "{$key}={$formattedValue}", $env);
+                } else {
+                    $env .= "\n{$key}={$formattedValue}";
                 }
             }
             file_put_contents($path, $env);

@@ -46,6 +46,33 @@ spl_autoload_register(function ($class) {
 
 /*
 |--------------------------------------------------------------------------
+| Early Environment File Check (For Installer)
+|--------------------------------------------------------------------------
+|
+| Before Laravel boots, check if .env exists. If not, create a minimal
+| .env file with a generated APP_KEY. This allows the installer to load
+| without 500 errors when .env is missing.
+|
+*/
+
+$envPath = __DIR__ . '/../.env';
+$envExamplePath = __DIR__ . '/../.env.example';
+
+if (!file_exists($envPath) && file_exists($envExamplePath)) {
+    // Copy .env.example to .env
+    copy($envExamplePath, $envPath);
+
+    // Generate a random APP_KEY (Laravel format: base64:43_random_chars)
+    $key = 'base64:' . base64_encode(random_bytes(32));
+
+    // Update APP_KEY in .env
+    $envContent = file_get_contents($envPath);
+    $envContent = preg_replace('/^APP_KEY=.*$/m', 'APP_KEY=' . $key, $envContent);
+    file_put_contents($envPath, $envContent);
+}
+
+/*
+|--------------------------------------------------------------------------
 | Run The Application
 |--------------------------------------------------------------------------
 |
