@@ -371,8 +371,8 @@ if (!function_exists('get_stylesheet_directory_uri')) {
     }
 }
 
-if (!function_exists('bx_enqueue_style')) {
-    function bx_enqueue_style($handle, $src = '', $deps = [], $ver = false, $media = 'all')
+if (!function_exists('bx_style')) {
+    function bx_style($handle, $src = '', $deps = [], $ver = false, $media = 'all')
     {
         \App\Services\AssetService::enqueueStyle($handle, $src, $deps, $ver, $media);
     }
@@ -381,12 +381,12 @@ if (!function_exists('bx_enqueue_style')) {
 if (!function_exists('wp_enqueue_style')) {
     function wp_enqueue_style($handle, $src = '', $deps = [], $ver = false, $media = 'all')
     {
-        bx_enqueue_style($handle, $src, $deps, $ver, $media);
+        bx_style($handle, $src, $deps, $ver, $media);
     }
 }
 
-if (!function_exists('bx_enqueue_script')) {
-    function bx_enqueue_script($handle, $src = '', $deps = [], $ver = false, $in_footer = false)
+if (!function_exists('bx_script')) {
+    function bx_script($handle, $src = '', $deps = [], $ver = false, $in_footer = false)
     {
         \App\Services\AssetService::enqueueScript($handle, $src, $deps, $ver, $in_footer);
     }
@@ -395,7 +395,7 @@ if (!function_exists('bx_enqueue_script')) {
 if (!function_exists('wp_enqueue_script')) {
     function wp_enqueue_script($handle, $src = '', $deps = [], $ver = false, $in_footer = false)
     {
-        bx_enqueue_script($handle, $src, $deps, $ver, $in_footer);
+        bx_script($handle, $src, $deps, $ver, $in_footer);
     }
 }
 

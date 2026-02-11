@@ -61,9 +61,9 @@ if (function_exists('add_action')) {
     // Test Enqueue
     add_action('bx_enqueue_scripts', function () {
         // Enqueue versioned script
-        wp_enqueue_script('theme-custom-js', get_theme_file_uri('custom.js'), [], '1.2.3', true);
+        bx_script('theme-custom-js', get_theme_file_uri('custom.js'), [], '1.2.3', true);
         // Enqueue versioned style
-        wp_enqueue_style('theme-custom-css', get_theme_file_uri('custom.css'), [], '1.0.0');
+        bx_style('theme-custom-css', get_theme_file_uri('custom.css'), [], '1.0.1');
     });
 }
 
