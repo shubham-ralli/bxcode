@@ -9,3 +9,6 @@
 .DS_Store
 .idea
 .vscode
+
+/public/uploads
+/storage/app/public
