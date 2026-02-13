@@ -13,13 +13,13 @@
 @section('content')
 
     <x-admin::admin-table :pagination="$themes" :counts="$counts" :status="$status" :search="$search"
-        route="admin.themes.index" bulk-route="" bulk-action-name="">
+        route="admin.themes.index" bulk-route="admin.themes.bulk" bulk-action-name="themes">
 
         <x-slot:header>
             <th
                 class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-10">
-                <input type="checkbox" id="selectAll" disabled
-                    class="rounded border-gray-300 text-gray-400 shadow-sm cursor-not-allowed">
+                <input type="checkbox" id="selectAll"
+                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
             </th>
             <th class="px-6 py-3 text-left bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider">Theme</th>
             <th class="px-6 py-3 text-left bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -33,8 +33,14 @@
             @forelse($themes as $theme)
                 <tr class="hover:bg-gray-50 transition-colors group">
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <input type="checkbox" disabled
-                            class="rounded border-gray-300 text-gray-400 shadow-sm cursor-not-allowed">
+                        @if(!$theme['active'])
+                            <input type="checkbox" name="ids[]" value="{{ $theme['id'] }}" form="bulkActionForm"
+                                class="item-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @else
+                            <input type="checkbox" disabled
+                                class="rounded border-gray-300 text-gray-400 shadow-sm cursor-not-allowed"
+                                title="Cannot delete active theme">
+                        @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm font-medium text-gray-900">
@@ -94,5 +100,20 @@
                 </tr>
             @endforelse
     </x-admin::admin-table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+
+            if (selectAll) {
+                selectAll.addEventListener('change', function () {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = selectAll.checked;
+                    });
+                });
+            }
+        });
+    </script>
 
 @endsection

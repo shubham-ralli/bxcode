@@ -67,6 +67,7 @@ Route::prefix(get_admin_prefix())->group(function () {
         Route::get('/themes', [App\Http\Controllers\ThemeController::class, 'index'])->name('admin.themes.index');
         Route::get('/themes/upload', [App\Http\Controllers\ThemeController::class, 'create'])->name('admin.themes.create');
         Route::post('/themes/upload', [App\Http\Controllers\ThemeController::class, 'store'])->name('admin.themes.upload');
+        Route::post('/themes/bulk', [App\Http\Controllers\ThemeController::class, 'bulkAction'])->name('admin.themes.bulk');
         Route::post('/themes/activate', [App\Http\Controllers\ThemeController::class, 'activate'])->name('admin.themes.activate');
         Route::post('/themes/delete', [App\Http\Controllers\ThemeController::class, 'destroy'])->name('admin.themes.delete');
 

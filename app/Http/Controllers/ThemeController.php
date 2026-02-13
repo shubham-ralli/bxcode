@@ -271,4 +271,35 @@ class ThemeController extends Controller
 
         return back()->with('error', 'Theme not found.');
     }
+    public function bulkAction(Request $request)
+    {
+        $request->validate([
+            'action' => 'required|in:delete',
+            'ids' => 'required|array',
+            'ids.*' => 'string'
+        ]);
+
+        $action = $request->input('action');
+        $ids = $request->input('ids');
+        $activeTheme = Setting::get('active_theme', 'bxcode-theme');
+        $count = 0;
+
+        if ($action === 'delete') {
+            foreach ($ids as $themeId) {
+                // Prevent deleting active theme
+                if ($themeId === $activeTheme) {
+                    continue;
+                }
+
+                $themePath = resource_path("views/themes/{$themeId}");
+
+                if (File::exists($themePath)) {
+                    File::deleteDirectory($themePath);
+                    $count++;
+                }
+            }
+        }
+
+        return back()->with('success', "Bulk action applied. {$count} themes processed.");
+    }
 }
