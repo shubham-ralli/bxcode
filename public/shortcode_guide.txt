@@ -1,0 +1,63 @@
+==============================================================================
+BXCODE CMS - SHORTCODE GUIDE
+==============================================================================
+
+1. HOW TO CREATE A SHORTCODE
+------------------------------------------------------------------------------
+Shortcodes are created in your theme's functions.php file (or an included file).
+
+TYPE A: SIMPLE SHORTCODE
+Returns a static string.
+Code:
+    add_shortcode('my_tag', function() {
+        return "Hello World";
+    });
+
+Usage: [my_tag]
+
+TYPE B: WITH ATTRIBUTES
+Accepts parameters like [my_tag title="Values"].
+Code:
+    add_shortcode('my_tag', function($atts) {
+        // Set defaults
+        $atts = shortcode_atts([
+            'title' => 'Default Title',
+        ], $atts);
+
+        return "<h1>" . $atts['title'] . "</h1>";
+    });
+
+Usage: [my_tag title="Custom Title"]
+
+TYPE C: TEMPLATE PART (Best for complex HTML)
+Loads a separate HTML/Blade file.
+Code:
+    add_shortcode('my_card', function($atts) {
+        ob_start(); // Start recording
+        get_template_part('partials.card-view'); // Load file
+        return ob_get_clean(); // Return recorded HTML
+    });
+
+2. HOW TO USE IN POSTS/PAGES
+------------------------------------------------------------------------------
+In the Admin Panel -> Posts/Pages -> Edit:
+Simply write the tag in the content area:
+
+    [simple_test]
+
+    [greet name="Admin" color="red"]
+
+3. HOW TO USE IN PHP FILES (Templates)
+------------------------------------------------------------------------------
+If you want to use a shortcode inside a PHP file (like footer.blade.php), 
+you must wrap it in the `do_shortcode()` function.
+
+Standard PHP:
+    <?php echo do_shortcode('[simple_test]'); ?>
+
+Blade Templates:
+    {!! do_shortcode('[greet name="User"]') !!}
+
+Note: Use {!! !!} in Blade to prevent HTML from being escaped (shown as text).
+
+==============================================================================

@@ -73,3 +73,12 @@ if (function_exists('add_action')) {
 }
 
 
+
+
+// Include Shortcodes
+$shortcodes_file = __DIR__ . '/inc/shortcodes.php';
+if (file_exists($shortcodes_file)) {
+    require_once $shortcodes_file;
+}
+
+

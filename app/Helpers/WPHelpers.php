@@ -508,3 +508,27 @@ if (!function_exists('get_search_form')) {
         }
     }
 }
+
+if (!function_exists('shortcode_atts')) {
+    /**
+     * Combine user attributes with known attributes and fill in defaults when needed.
+     *
+     * @param array  $pairs     Entire list of supported attributes and their defaults.
+     * @param array  $atts      User defined attributes in shortcode tag.
+     * @param string $shortcode Optional. The name of the shortcode, provided for convenience.
+     * @return array Combined and filtered attribute list.
+     */
+    function shortcode_atts($pairs, $atts, $shortcode = '')
+    {
+        $atts = (array) $atts;
+        $out = array();
+        foreach ($pairs as $name => $default) {
+            if (array_key_exists($name, $atts)) {
+                $out[$name] = $atts[$name];
+            } else {
+                $out[$name] = $default;
+            }
+        }
+        return $out;
+    }
+}
