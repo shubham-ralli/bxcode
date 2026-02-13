@@ -33,10 +33,9 @@
                         <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
                     </div>
 
-                    <form class="search-form ms-4">
-                        <input type="text" placeholder="Search..." class="form-control">
-                        <button type="submit" class="btn"><i class="bi bi-search"></i></button>
-                    </form>
+
+
+                    {{ get_search_form() }}
                 </div>
             </div>
 

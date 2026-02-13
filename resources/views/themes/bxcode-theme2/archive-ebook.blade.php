@@ -1,13 +1,18 @@
 {!! get_header() !!}
 
-<section class="category-header">
-    <div class="container">
-        <div class="category-title-section">
-            <h1 class="category-title">{{ $archiveTitle ?? get_setting('site_title') }}</h1>
-            <p class="category-description">Exploring innovation, digital transformation, and the future of tech</p>
+
+<main class="main">
+
+    <div class="page-title position-relative">
+        <div class="title-wrapper">
+            <h1>{{ $archiveTitle ?? get_setting('site_title') }}</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis,
+                pulvinar dapibus leo.</p>
         </div>
     </div>
-</section>
+
+</main>
+
 
 <main class="container mx-auto px-4 py-8">
     <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
