@@ -15,6 +15,11 @@ return new class extends Migration {
             $table->string('filename');
             $table->string('path');
             $table->string('mime_type');
+            $table->unsignedBigInteger('size')->nullable();
+            $table->string('alt_text')->nullable();
+            $table->string('title')->nullable();
+            $table->text('caption')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

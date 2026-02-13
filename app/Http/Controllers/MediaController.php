@@ -146,11 +146,15 @@ class MediaController extends Controller
         $request->validate([
             'alt_text' => 'nullable|string|max:255',
             'title' => 'nullable|string|max:255',
+            'caption' => 'nullable|string',
+            'description' => 'nullable|string',
         ]);
 
         $media->update([
             'alt_text' => $request->alt_text,
             'title' => $request->title,
+            'caption' => $request->caption,
+            'description' => $request->description,
         ]);
 
         if ($request->wantsJson()) {

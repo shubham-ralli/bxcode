@@ -96,12 +96,14 @@
                                         id="sidebarFilename" class="break-all"></span></p>
                                 <p><span class="font-semibold text-gray-700">File type:</span> <span
                                         id="sidebarFileType"></span></p>
-                                <p id="sidebarSize" class="hidden"></p>
+                                <p id="sidebarSizeContainer" class="hidden"><span
+                                        class="font-semibold text-gray-700">Size:</span> <span id="sidebarSize"></span>
+                                </p>
                             </div>
 
                             <!-- Inputs -->
                             <div class="space-y-4 flex-1">
-                                <div>
+                                <div id="fieldContainerAlt">
                                     <label class="block text-sm font-semibold text-gray-700 mb-1">Alternative
                                         Text</label>
                                     <input type="text" id="sidebarAlt" oninput="debouncedSidebarSave()"
@@ -110,10 +112,20 @@
                                     <p class="text-xs text-gray-500 mt-1">Describe the purpose of the image. Leave empty
                                         if the image is purely decorative.</p>
                                 </div>
-                                <div>
+                                <div id="fieldContainerTitle">
                                     <label class="block text-sm font-semibold text-gray-700 mb-1">Title</label>
                                     <input type="text" id="sidebarTitle" oninput="debouncedSidebarSave()"
                                         class="block w-full border-gray-300 rounded-md shadow-sm text-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                <div id="fieldContainerCaption" class="hidden">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Caption</label>
+                                    <textarea id="sidebarCaption" oninput="debouncedSidebarSave()" rows="2"
+                                        class="block w-full border-gray-300 rounded-md shadow-sm text-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                                </div>
+                                <div id="fieldContainerDescription" class="hidden">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+                                    <textarea id="sidebarDescription" oninput="debouncedSidebarSave()" rows="3"
+                                        class="block w-full border-gray-300 rounded-md shadow-sm text-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"></textarea>
                                 </div>
 
                                 <div class="border-t border-gray-200 pt-4 mt-4">
@@ -397,9 +409,35 @@
             document.getElementById('sidebarFilename').textContent = item.filename || 'Unknown';
             document.getElementById('sidebarFileType').textContent = item.mime_type || 'Unknown';
 
+            if (item.size) {
+                document.getElementById('sidebarSize').textContent = formatBytes(item.size);
+                document.getElementById('sidebarSizeContainer').classList.remove('hidden');
+            } else {
+                document.getElementById('sidebarSizeContainer').classList.add('hidden');
+            }
+
+            // Populate Fields
             document.getElementById('sidebarAlt').value = item.alt_text || '';
             document.getElementById('sidebarTitle').value = item.title || '';
+            document.getElementById('sidebarCaption').value = item.caption || '';
+            document.getElementById('sidebarDescription').value = item.description || '';
             document.getElementById('sidebarUrl').value = pickerSelectedUrl || '';
+
+            // Toggle Fields based on MIME Type
+            const isImage = item.mime_type && item.mime_type.startsWith('image/');
+
+            if (isImage) {
+                // Show Image Fields: Title, Alt
+                document.getElementById('fieldContainerAlt').classList.remove('hidden');
+                // Hide Other Fields
+                document.getElementById('fieldContainerCaption').classList.add('hidden');
+                document.getElementById('fieldContainerDescription').classList.add('hidden');
+            } else {
+                // Show Other Fields: Title, Caption, Description
+                document.getElementById('fieldContainerAlt').classList.add('hidden');
+                document.getElementById('fieldContainerCaption').classList.remove('hidden');
+                document.getElementById('fieldContainerDescription').classList.remove('hidden');
+            }
         }
     }
 
@@ -408,6 +446,8 @@
 
         const alt = document.getElementById('sidebarAlt').value;
         const title = document.getElementById('sidebarTitle').value;
+        const caption = document.getElementById('sidebarCaption').value;
+        const description = document.getElementById('sidebarDescription').value;
 
         // Show saving status immediately
         const status = document.getElementById('sidebarSaveStatus');
@@ -428,7 +468,9 @@
             body: JSON.stringify({
                 _method: 'PUT',
                 alt_text: alt,
-                title: title
+                title: title,
+                caption: caption,
+                description: description
             })
         })
             .then(async res => {
@@ -454,6 +496,8 @@
                     if (pickerData[pickerSelectedId]) {
                         pickerData[pickerSelectedId].alt_text = alt;
                         pickerData[pickerSelectedId].title = title;
+                        pickerData[pickerSelectedId].caption = caption;
+                        pickerData[pickerSelectedId].description = description;
                     }
                 }
             })
@@ -591,4 +635,14 @@
                 statusDiv.innerText = 'Error uploading';
             });
     }
+    function formatBytes(bytes, decimals = 2) {
+        if (!+bytes) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+    }
+
+
 </script>

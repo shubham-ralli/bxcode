@@ -155,7 +155,7 @@
                             <input type="hidden" id="modalMediaId">
                             <input type="hidden" id="modalFilenameInput">
 
-                            <div>
+                            <div id="fieldContainerTitle">
                                 <label
                                     class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Title</label>
                                 <input type="text" id="modalTitle"
@@ -163,13 +163,29 @@
                                     oninput="debouncedAutoSave()">
                             </div>
 
-                            <div>
+                            <div id="fieldContainerAlt">
                                 <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Alt
                                     Text</label>
                                 <textarea id="modalAlt" rows="3"
                                     class="w-full text-sm border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-colors bg-gray-50 focus:bg-white resize-none"
                                     oninput="debouncedAutoSave()"></textarea>
                                 <p class="mt-1.5 text-xs text-gray-400">Essential for SEO and accessibility.</p>
+                            </div>
+
+                            <div id="fieldContainerCaption" class="hidden">
+                                <label
+                                    class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Caption</label>
+                                <textarea id="modalCaption" rows="2"
+                                    class="w-full text-sm border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-colors bg-gray-50 focus:bg-white resize-none"
+                                    oninput="debouncedAutoSave()"></textarea>
+                            </div>
+
+                            <div id="fieldContainerDescription" class="hidden">
+                                <label
+                                    class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Description</label>
+                                <textarea id="modalDescription" rows="4"
+                                    class="w-full text-sm border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-colors bg-gray-50 focus:bg-white resize-none"
+                                    oninput="debouncedAutoSave()"></textarea>
                             </div>
 
                             <!-- Auto-Save Indicator -->
@@ -247,13 +263,20 @@
             const id = document.getElementById('modalMediaId').value;
             const itemsUrl = "{{ route('admin.media.index') }}";
 
+            const alt = document.getElementById('modalAlt').value;
+            const title = document.getElementById('modalTitle').value;
+            const caption = document.getElementById('modalCaption').value;
+            const description = document.getElementById('modalDescription').value;
+
             fetch(`${itemsUrl}/${id}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 body: JSON.stringify({
                     _method: 'PUT',
-                    alt_text: document.getElementById('modalAlt').value,
-                    title: document.getElementById('modalTitle').value
+                    alt_text: alt,
+                    title: title,
+                    caption: caption,
+                    description: description
                 })
             })
                 .then(res => res.json())
@@ -277,16 +300,36 @@
                 const img = document.getElementById('modalImage');
                 img.src = fullUrl;
                 img.classList.remove('hidden');
+
+                // Show Alt, Hide Caption/Desc
+                document.getElementById('fieldContainerAlt').classList.remove('hidden');
+                document.getElementById('fieldContainerCaption').classList.add('hidden');
+                document.getElementById('fieldContainerDescription').classList.add('hidden');
             } else if (media.mime_type.startsWith('video/')) {
                 const v = document.getElementById('modalVideo');
                 v.src = fullUrl;
                 v.classList.remove('hidden');
+
+                // Hide Alt, Show Caption/Desc
+                document.getElementById('fieldContainerAlt').classList.add('hidden');
+                document.getElementById('fieldContainerCaption').classList.remove('hidden');
+                document.getElementById('fieldContainerDescription').classList.remove('hidden');
             } else if (media.mime_type.startsWith('audio/')) {
                 const a = document.getElementById('modalAudio');
                 a.src = fullUrl;
                 a.classList.remove('hidden');
+
+                // Hide Alt, Show Caption/Desc
+                document.getElementById('fieldContainerAlt').classList.add('hidden');
+                document.getElementById('fieldContainerCaption').classList.remove('hidden');
+                document.getElementById('fieldContainerDescription').classList.remove('hidden');
             } else {
                 document.getElementById('modalFileIcon').classList.remove('hidden');
+
+                // Hide Alt, Show Caption/Desc
+                document.getElementById('fieldContainerAlt').classList.add('hidden');
+                document.getElementById('fieldContainerCaption').classList.remove('hidden');
+                document.getElementById('fieldContainerDescription').classList.remove('hidden');
             }
 
             // Fill Data
@@ -298,6 +341,8 @@
             document.getElementById('modalMediaId').value = media.id;
             document.getElementById('modalTitle').value = media.title || '';
             document.getElementById('modalAlt').value = media.alt_text || '';
+            document.getElementById('modalCaption').value = media.caption || '';
+            document.getElementById('modalDescription').value = media.description || '';
             document.getElementById('modalUrl').value = fullUrl;
 
             // Delete Action
@@ -452,21 +497,21 @@
 
             // Generate Placeholder HTML
             const placeholderHtml = `
-                        <div id="${tempId}" class="relative group aspect-square bg-white rounded-lg border border-indigo-100 shadow-sm p-2 flex flex-col items-center justify-center relative overflow-hidden">
-                           <!-- Icon -->
-                           <div class="mb-3 text-indigo-500">
-                                <svg class="w-8 h-8 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                           </div>
-                           <!-- Progress Bar -->
-                           <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1">
-                                <div class="progress-bar bg-indigo-500 h-full rounded-full transition-all duration-200" style="width: 0%"></div>
-                           </div>
-                           <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Uploading...</span>
+                            <div id="${tempId}" class="relative group aspect-square bg-white rounded-lg border border-indigo-100 shadow-sm p-2 flex flex-col items-center justify-center relative overflow-hidden">
+                               <!-- Icon -->
+                               <div class="mb-3 text-indigo-500">
+                                    <svg class="w-8 h-8 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                               </div>
+                               <!-- Progress Bar -->
+                               <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1">
+                                    <div class="progress-bar bg-indigo-500 h-full rounded-full transition-all duration-200" style="width: 0%"></div>
+                               </div>
+                               <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Uploading...</span>
 
-                           <!-- Overlay for image preview if available -->
-                           ${file.type.startsWith('image/') ? `<img src="${URL.createObjectURL(file)}" class="absolute inset-0 w-full h-full object-cover opacity-20 -z-0">` : ''}
-                        </div>
-                    `;
+                               <!-- Overlay for image preview if available -->
+                               ${file.type.startsWith('image/') ? `<img src="${URL.createObjectURL(file)}" class="absolute inset-0 w-full h-full object-cover opacity-20 -z-0">` : ''}
+                            </div>
+                        `;
 
             // Prepend to Grid
             const grid = document.getElementById('mediaGrid');
@@ -516,11 +561,11 @@
 
         function showError(card, message) {
             card.innerHTML = `
-                        <div class="text-center text-red-500 p-2">
-                            <svg class="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <span class="text-[10px] font-bold block">${message}</span>
-                        </div>
-                    `;
+                            <div class="text-center text-red-500 p-2">
+                                <svg class="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span class="text-[10px] font-bold block">${message}</span>
+                            </div>
+                        `;
             setTimeout(() => card.remove(), 3000);
         }
 
