@@ -532,3 +532,109 @@ if (!function_exists('shortcode_atts')) {
         return $out;
     }
 }
+
+if (!function_exists('get_the_post_thumbnail')) {
+    /**
+     * Retrieve the post thumbnail.
+     *
+     * @param int|\WP_Post|object|null $post Optional. Post ID or Post object. Default is global $post (if available) or null.
+     * @param string|array $size Optional. Image size. Default 'post-thumbnail'.
+     * @param string|array $attr Optional. Query string or array of attributes. Default empty.
+     * @return string The post thumbnail image tag.
+     */
+    function get_the_post_thumbnail($post = null, $size = 'post-thumbnail', $attr = '')
+    {
+        // Resolve Post
+        if (is_null($post)) {
+            // Try to get current post from global if available
+            if (isset($GLOBALS['post'])) {
+                $post = $GLOBALS['post'];
+            } else {
+                return '';
+            }
+        }
+
+        if (is_numeric($post)) {
+            $post = \App\Models\Post::find($post);
+        }
+
+        if (!$post || empty($post->featured_image_url)) {
+            return '';
+        }
+
+        $media = $post->featuredMedia; // Eloquent relationship
+
+        // Resolve Attributes
+        $default_attr = [
+            'src' => $post->featured_image_url,
+            'class' => "attachment-{$size} size-{$size} wp-post-image bx-image-{$post->id}",
+            'alt' => $media ? $media->alt_text : $post->title,
+            'title' => $media ? $media->title : $post->title,
+            'loading' => 'lazy',
+        ];
+
+        if (is_array($attr)) {
+            // Handle class merging specifically
+            if (isset($attr['class']) && isset($default_attr['class'])) {
+                $attr['class'] = $default_attr['class'] . ' ' . $attr['class'];
+            }
+            $attr = array_merge($default_attr, $attr);
+        } else {
+            // Handle string attributes if needed (simplified for now)
+            $attr = $default_attr;
+        }
+
+        // Build HTML
+        $html = '<img';
+        foreach ($attr as $name => $value) {
+            // Skip empty values if necessary, but empty alt is valid
+            $html .= ' ' . $name . '="' . htmlspecialchars($value ?? '') . '"';
+        }
+        $html .= ' />';
+
+        return $html;
+    }
+}
+
+if (!function_exists('the_post_thumbnail')) {
+    /**
+     * Display the post thumbnail.
+     *
+     * Supports standard WP syntax: the_post_thumbnail( $size, $attr )
+     * And explicit syntax: the_post_thumbnail( $post, $size, $attr )
+     *
+     * @param int|\WP_Post|object|string|null $post_or_size Optional. Post ID/Object OR Image size.
+     * @param string|array $size_or_attr Optional. Image size OR Attributes.
+     * @param string|array $attr Optional. Attributes if 3 args used.
+     */
+    function the_post_thumbnail($post_or_size = null, $size_or_attr = 'post-thumbnail', $attr = '')
+    {
+        $post = null;
+        $size = 'post-thumbnail';
+        $attributes = '';
+
+        // Check if first argument is likely a size (string) or null (default size)
+        // AND second argument is array (attributes) or string (attributes)
+        // OR simply if it's NOT a post object/id
+        $is_first_arg_post = false;
+
+        if (is_object($post_or_size) || (is_numeric($post_or_size) && $post_or_size > 0)) {
+            $is_first_arg_post = true;
+        }
+
+        if ($is_first_arg_post) {
+            // Usage: ($post, $size, $attr)
+            $post = $post_or_size;
+            $size = $size_or_attr;
+            $attributes = $attr;
+        } else {
+            // Usage: ($size, $attr) - WP Style
+            // Use global post implicit in get_the_post_thumbnail
+            $post = null;
+            $size = $post_or_size ?? 'post-thumbnail';
+            $attributes = $size_or_attr;
+        }
+
+        echo get_the_post_thumbnail($post, $size, $attributes);
+    }
+}
