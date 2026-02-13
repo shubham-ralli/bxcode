@@ -159,7 +159,7 @@
                                 </span>
                             </div>
 
-                            <button type="button" onclick="openMediaPicker('profile_image_id', 'profilePreview')"
+                            <button type="button" onclick="openMediaPicker('profile_image_id', 'profilePreview', 'image')"
                                 class="w-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded text-sm shadow-sm transition-colors mb-2">
                                 Set Profile Image
                             </button>

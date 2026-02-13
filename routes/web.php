@@ -34,7 +34,7 @@ Route::prefix(get_admin_prefix())->group(function () {
         Route::post('/media', [App\Http\Controllers\MediaController::class, 'store'])->name('admin.media.store');
         Route::delete('/media/bulk-delete', [App\Http\Controllers\MediaController::class, 'bulkDestroy'])->name('admin.media.bulk-delete');
         Route::put('/media/{id}', [App\Http\Controllers\MediaController::class, 'update'])->name('admin.media.update');
-        Route::delete('/media/{id}', [App\Http\Controllers\MediaController::class, 'destroy'])->name('admin.media.destroy');
+        Route::delete('/media/{media}', [App\Http\Controllers\MediaController::class, 'destroy'])->name('admin.media.destroy');
 
         Route::get('/posts', [App\Http\Controllers\PostController::class, 'index'])->name('admin.posts.index');
         Route::get('/posts/create', [App\Http\Controllers\PostController::class, 'create'])->name('admin.posts.create');

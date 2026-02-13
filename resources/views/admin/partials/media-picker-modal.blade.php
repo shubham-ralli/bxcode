@@ -231,17 +231,26 @@
         }, 300);
     }
 
-    function openMediaPicker(inputId, previewId) {
+    function openMediaPicker(inputId, previewId, type = 'all') {
         targetInputId = inputId;
         targetPreviewId = previewId;
         document.getElementById('mediaPickerModal').classList.remove('hidden');
         switchTab('library');
 
-        // Always reload if empty or stale
-        if (document.getElementById('pickerGrid').children.length <= 1 || Object.keys(pickerData).length === 0) {
-            pickerPage = 1;
-            loadPickerMedia(true);
+        const typeSelect = document.getElementById('pickerTypeFilter');
+        if (type !== 'all') {
+            typeSelect.value = type;
+            typeSelect.disabled = true; // Lock the filter if specific type requested
+            typeSelect.classList.add('bg-gray-100', 'cursor-not-allowed');
+        } else {
+            typeSelect.value = 'all';
+            typeSelect.disabled = false;
+            typeSelect.classList.remove('bg-gray-100', 'cursor-not-allowed');
         }
+
+        // Always reload to apply the filter immediately
+        pickerPage = 1;
+        loadPickerMedia(true);
     }
 
     // --- Auto Save Logic (Matching Main Library) ---
@@ -525,13 +534,20 @@
     }
 
     function deletePickerMedia() {
-        if (!pickerSelectedId) return;
+        if (!pickerSelectedId) {
+            console.error('No media selected for deletion');
+            return;
+        }
 
         if (!confirm('Are you sure you want to delete this file permanently? This usage will be broken.')) {
             return;
         }
 
-        const deleteUrl = "{{ route('admin.media.index') }}/" + pickerSelectedId;
+        // Use a placeholder ID to generate the route, then replace it with the actual ID
+        const deleteUrlTemplate = "{{ route('admin.media.destroy', ['media' => 'MEDIA_ID']) }}";
+        const deleteUrl = deleteUrlTemplate.replace('MEDIA_ID', pickerSelectedId);
+
+        console.log('Deleting Media ID:', pickerSelectedId, 'URL:', deleteUrl);
 
         fetch(deleteUrl, {
             method: 'DELETE',
@@ -566,6 +582,9 @@
                         pickerPage = 1;
                         loadPickerMedia(true);
                     }
+
+                    // Show success message briefly?
+                    alert('Media deleted successfully.');
                 } else {
                     alert('Error deleting file: ' + (data.message || 'Unknown error'));
                 }

@@ -689,14 +689,14 @@
                                         d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
-                                <button type="button" onclick="openMediaPicker('featured_image', 'featuredPreview')"
+                                <button type="button" onclick="openMediaPicker('featured_image', 'featuredPreview', 'image')"
                                     class="mt-2 text-sm text-indigo-600 font-medium hover:text-indigo-500">Set featured
                                     image</button>
                             </div>
 
                             <div id="featuredActions"
                                 class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity {{ $featuredUrl ? '' : 'hidden' }}">
-                                <button type="button" onclick="openMediaPicker('featured_image', 'featuredPreview')"
+                                <button type="button" onclick="openMediaPicker('featured_image', 'featuredPreview', 'image')"
                                     class="bg-white text-gray-700 px-3 py-1 rounded text-xs font-medium hover:bg-gray-50">Replace</button>
                                 <button type="button" onclick="removeFeaturedImage()"
                                     class="bg-red-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-red-700">Remove</button>

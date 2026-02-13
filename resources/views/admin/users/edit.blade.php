@@ -88,7 +88,7 @@
                             @endphp
                             <img id="profilePreview" src="{{ $profileUrl }}" alt="Profile Preview"
                                 class="w-32 h-32 rounded-full object-cover mb-3 bg-gray-200 {{ $profileUrl ? '' : 'hidden' }} border shadow-sm">
-                            <button type="button" onclick="openMediaPicker('profile_image_id', 'profilePreview')"
+                            <button type="button" onclick="openMediaPicker('profile_image_id', 'profilePreview', 'image')"
                                 class="text-indigo-600 hover:text-indigo-800 text-sm font-medium focus:outline-none">
                                 Set Profile Image
                             </button>

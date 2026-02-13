@@ -243,6 +243,7 @@
             if (itemId) {
                 const item = currentMediaItems.find(m => m.id == itemId);
                 if (item) {
+                    console.log('Auto-opening modal for item:', item);
                     openMediaModal(item);
                 }
             }
@@ -346,7 +347,12 @@
             document.getElementById('modalUrl').value = fullUrl;
 
             // Delete Action
-            document.getElementById('mediaDeleteForm').action = "{{ route('admin.media.index') }}/" + media.id;
+            // Use placeholder to generate correct URL from named route
+            const deleteRoute = "{{ route('admin.media.destroy', ['media' => 'MEDIA_ID']) }}";
+            const finalAction = deleteRoute.replace('MEDIA_ID', media.id);
+            document.getElementById('mediaDeleteForm').action = finalAction;
+            console.log('Opened Modal. Media ID:', media.id);
+            console.log('Delete Form Action set to:', finalAction);
 
             // Deep Linking
             const url = new URL(window.location);
@@ -497,21 +503,21 @@
 
             // Generate Placeholder HTML
             const placeholderHtml = `
-                            <div id="${tempId}" class="relative group aspect-square bg-white rounded-lg border border-indigo-100 shadow-sm p-2 flex flex-col items-center justify-center relative overflow-hidden">
-                               <!-- Icon -->
-                               <div class="mb-3 text-indigo-500">
-                                    <svg class="w-8 h-8 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                               </div>
-                               <!-- Progress Bar -->
-                               <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1">
-                                    <div class="progress-bar bg-indigo-500 h-full rounded-full transition-all duration-200" style="width: 0%"></div>
-                               </div>
-                               <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Uploading...</span>
+                                <div id="${tempId}" class="relative group aspect-square bg-white rounded-lg border border-indigo-100 shadow-sm p-2 flex flex-col items-center justify-center relative overflow-hidden">
+                                   <!-- Icon -->
+                                   <div class="mb-3 text-indigo-500">
+                                        <svg class="w-8 h-8 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                   </div>
+                                   <!-- Progress Bar -->
+                                   <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1">
+                                        <div class="progress-bar bg-indigo-500 h-full rounded-full transition-all duration-200" style="width: 0%"></div>
+                                   </div>
+                                   <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Uploading...</span>
 
-                               <!-- Overlay for image preview if available -->
-                               ${file.type.startsWith('image/') ? `<img src="${URL.createObjectURL(file)}" class="absolute inset-0 w-full h-full object-cover opacity-20 -z-0">` : ''}
-                            </div>
-                        `;
+                                   <!-- Overlay for image preview if available -->
+                                   ${file.type.startsWith('image/') ? `<img src="${URL.createObjectURL(file)}" class="absolute inset-0 w-full h-full object-cover opacity-20 -z-0">` : ''}
+                                </div>
+                            `;
 
             // Prepend to Grid
             const grid = document.getElementById('mediaGrid');
@@ -561,11 +567,11 @@
 
         function showError(card, message) {
             card.innerHTML = `
-                            <div class="text-center text-red-500 p-2">
-                                <svg class="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <span class="text-[10px] font-bold block">${message}</span>
-                            </div>
-                        `;
+                                <div class="text-center text-red-500 p-2">
+                                    <svg class="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="text-[10px] font-bold block">${message}</span>
+                                </div>
+                            `;
             setTimeout(() => card.remove(), 3000);
         }
 

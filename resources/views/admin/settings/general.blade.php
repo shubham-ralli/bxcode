@@ -95,7 +95,8 @@
 
                                         <!-- Buttons -->
                                         <div class="flex flex-col gap-2">
-                                            <button type="button" onclick="openMediaPicker('site_icon', 'siteIconPreview')"
+                                            <button type="button"
+                                                onclick="openMediaPicker('site_icon', 'siteIconPreview', 'image')"
                                                 class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded text-sm shadow-sm transition-colors">
                                                 {{ $siteIcon ? 'Change Site Icon' : 'Select Site Icon' }}
                                             </button>
@@ -112,43 +113,43 @@
 
                                 <!-- Site Language -->
                                 <div x-data="{ 
-                                                search: '', 
-                                                open: false, 
-                                                selected: '{{ $settings['site_language'] ?? 'en' }}',
-                                                languages: {
-                                                    'en': 'English',
-                                                    'es': 'Spanish',
-                                                    'fr': 'French',
-                                                    'de': 'German',
-                                                    'it': 'Italian',
-                                                    'pt': 'Portuguese',
-                                                    'ru': 'Russian',
-                                                    'zh': 'Chinese',
-                                                    'ja': 'Japanese',
-                                                    'ko': 'Korean',
-                                                    'hi': 'Hindi',
-                                                    'ar': 'Arabic',
-                                                    'nl': 'Dutch',
-                                                    'pl': 'Polish',
-                                                    'tr': 'Turkish',
-                                                    'id': 'Indonesian',
-                                                    'th': 'Thai',
-                                                    'vi': 'Vietnamese'
-                                                },
-                                                get filteredLanguages() {
-                                                    if (this.search === '') {
-                                                        return this.languages;
+                                                    search: '', 
+                                                    open: false, 
+                                                    selected: '{{ $settings['site_language'] ?? 'en' }}',
+                                                    languages: {
+                                                        'en': 'English',
+                                                        'es': 'Spanish',
+                                                        'fr': 'French',
+                                                        'de': 'German',
+                                                        'it': 'Italian',
+                                                        'pt': 'Portuguese',
+                                                        'ru': 'Russian',
+                                                        'zh': 'Chinese',
+                                                        'ja': 'Japanese',
+                                                        'ko': 'Korean',
+                                                        'hi': 'Hindi',
+                                                        'ar': 'Arabic',
+                                                        'nl': 'Dutch',
+                                                        'pl': 'Polish',
+                                                        'tr': 'Turkish',
+                                                        'id': 'Indonesian',
+                                                        'th': 'Thai',
+                                                        'vi': 'Vietnamese'
+                                                    },
+                                                    get filteredLanguages() {
+                                                        if (this.search === '') {
+                                                            return this.languages;
+                                                        }
+                                                        return Object.fromEntries(
+                                                            Object.entries(this.languages).filter(([key, value]) => 
+                                                                value.toLowerCase().includes(this.search.toLowerCase())
+                                                            )
+                                                        );
+                                                    },
+                                                    get selectedLabel() {
+                                                        return this.languages[this.selected] || this.selected;
                                                     }
-                                                    return Object.fromEntries(
-                                                        Object.entries(this.languages).filter(([key, value]) => 
-                                                            value.toLowerCase().includes(this.search.toLowerCase())
-                                                        )
-                                                    );
-                                                },
-                                                get selectedLabel() {
-                                                    return this.languages[this.selected] || this.selected;
-                                                }
-                                            }" class="relative">
+                                                }" class="relative">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Site Language</label>
                                     <input type="hidden" name="site_language" :value="selected">
 
