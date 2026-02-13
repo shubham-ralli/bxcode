@@ -92,8 +92,8 @@
 
         /* Submenu Styling */
         .submenu-inline {
-            background-color: #1e293b;
-            /* slate-800 */
+            background-color: #f9fafb;
+            /* gray-50 */
         }
 
         .submenu-item {
@@ -108,8 +108,8 @@
             top: 50%;
             width: 4px;
             height: 4px;
-            background-color: #94a3b8;
-            /* slate-400 */
+            background-color: #cbd5e1;
+            /* slate-300 */
             border-radius: 50%;
             transform: translateY(-50%);
         }
@@ -130,10 +130,12 @@
             left: 5rem;
             /* w-20 = 5rem */
             width: 200px;
-            background-color: #1e293b;
-            /* slate-800 */
+            background-color: #ffffff;
+            /* white */
+            border: 1px solid #e5e7eb;
+            /* gray-200 */
             border-radius: 0 0.5rem 0.5rem 0;
-            box-shadow: 4px 0 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 4px 0 6px -1px rgba(0, 0, 0, 0.05);
             z-index: 100;
             pointer-events: none;
             /* Initially none to prevent flickering, JS handles visibility */
@@ -150,12 +152,13 @@
         .flyout-header {
             display: block;
             padding: 0.75rem 1rem;
-            background-color: #0f172a;
-            /* slate-900 */
+            background-color: #f3f4f6;
+            /* gray-100 */
             font-weight: 600;
             font-size: 0.875rem;
-            color: #fff;
-            border-bottom: 1px solid #334155;
+            color: #1f2937;
+            /* gray-800 */
+            border-bottom: 1px solid #e5e7eb;
         }
 
         /* Hide chevron when collapsed */
@@ -169,16 +172,18 @@
         }
 
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: #f3f4f6;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: #d1d5db;
+            /* gray-300 */
             border-radius: 5px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+            background: #9ca3af;
+            /* gray-400 */
         }
     </style>
 </head>
@@ -254,7 +259,7 @@
                         </button>
 
                         <!-- Inline Submenu -->
-                        <ul x-show="open" x-cloak class="mt-2 submenu-inline rounded-lg"
+                        <ul x-show="open" x-cloak class="mt-2 space-y-1 submenu-inline rounded-lg"
                             style="display: {{ $activePostType === 'post' && (request()->routeIs('admin.posts.*') || request()->routeIs('admin.tags.*')) ? 'block' : 'none' }}">
                             <li>
                                 <a href="{{ route('admin.posts.index', ['type' => 'post']) }}"
@@ -345,7 +350,7 @@
                         </button>
 
                         <!-- Inline Submenu -->
-                        <ul x-show="open" x-cloak class="mt-2 submenu-inline rounded-lg"
+                        <ul x-show="open" x-cloak class="mt-2 space-y-1 submenu-inline rounded-lg"
                             style="display: {{ $activePostType === 'page' ? 'block' : 'none' }}">
                             <li>
                                 <a href="{{ route('admin.posts.index', ['type' => 'page']) }}"
@@ -426,7 +431,7 @@
                             </button>
 
                             <!-- Inline Submenu -->
-                            <ul x-show="open" x-cloak class="mt-2 submenu-inline rounded-lg"
+                            <ul x-show="open" x-cloak class="mt-2 space-y-1 submenu-inline rounded-lg"
                                 style="display: {{ $isActive ? 'block' : 'none' }}">
                                 <li>
                                     <a href="{{ route('admin.posts.index', ['type' => $cpt->key]) }}"
@@ -518,7 +523,7 @@
                         </button>
 
                         <!-- Inline Menu (Expanded) -->
-                        <ul x-show="open" x-cloak class="mt-2 submenu-inline rounded-lg"
+                        <ul x-show="open" x-cloak class="mt-2 space-y-1 submenu-inline rounded-lg"
                             style="display: {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.profile.*') ? 'block' : 'none' }}">
                             <li>
                                 <a href="{{ route('admin.users.index') }}"
@@ -600,7 +605,7 @@
                         </button>
 
                         <!-- Inline Submenu -->
-                        <ul x-show="open" x-cloak class="mt-2 submenu-inline rounded-lg"
+                        <ul x-show="open" x-cloak class="mt-2 space-y-1 submenu-inline rounded-lg"
                             style="display: {{ request()->routeIs('admin.themes.*') || request()->routeIs('admin.menus.*') ? 'block' : 'none' }}">
                             <li>
                                 <a href="{{ route('admin.themes.index') }}"
@@ -656,7 +661,7 @@
                         </button>
 
                         <!-- Inline Submenu -->
-                        <ul x-show="open" x-cloak class="mt-2 submenu-inline rounded-lg"
+                        <ul x-show="open" x-cloak class="mt-2 space-y-1 submenu-inline rounded-lg"
                             style="display: {{ request()->routeIs('admin.plugins.*') ? 'block' : 'none' }}">
                             <li>
                                 <a href="{{ route('admin.plugins.index') }}"
@@ -724,7 +729,7 @@
                         </button>
 
                         <!-- Inline Menu (Expanded) -->
-                        <ul x-show="open" x-cloak class="mt-2 submenu-inline rounded-lg"
+                        <ul x-show="open" x-cloak class="mt-2 space-y-1 submenu-inline rounded-lg"
                             style="display: {{ request()->routeIs('admin.settings.*') ? 'block' : 'none' }}">
                             <li>
                                 <a href="{{ route('admin.settings.general') }}"
@@ -800,7 +805,7 @@
                                 </button>
 
                                 <!-- Inline Submenu -->
-                                <ul x-show="open" x-cloak class="mt-2 submenu-inline rounded-lg"
+                                <ul x-show="open" x-cloak class="mt-2 space-y-1 submenu-inline rounded-lg"
                                     style="display: {{ request()->routeIs($item['active_pattern']) ? 'block' : 'none' }}">
                                     @foreach($item['children'] as $child)
                                         <li>
@@ -1280,7 +1285,6 @@
                 }));
             });
         </script>
-
 </body>
 
 </html>

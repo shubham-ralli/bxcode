@@ -65,7 +65,10 @@ Route::prefix(get_admin_prefix())->group(function () {
 
         // Theme Routes
         Route::get('/themes', [App\Http\Controllers\ThemeController::class, 'index'])->name('admin.themes.index');
+        Route::get('/themes/upload', [App\Http\Controllers\ThemeController::class, 'create'])->name('admin.themes.create');
+        Route::post('/themes/upload', [App\Http\Controllers\ThemeController::class, 'store'])->name('admin.themes.upload');
         Route::post('/themes/activate', [App\Http\Controllers\ThemeController::class, 'activate'])->name('admin.themes.activate');
+        Route::post('/themes/delete', [App\Http\Controllers\ThemeController::class, 'destroy'])->name('admin.themes.delete');
 
         // User Management Routes
         Route::post('users/bulk', [App\Http\Controllers\UserController::class, 'bulkAction'])->name('admin.users.bulk');
@@ -159,3 +162,4 @@ Route::get('/{slug?}', [App\Http\Controllers\FrontendController::class, 'handle'
 
 
 
+// Force Refresh

@@ -4,11 +4,10 @@
 @section('header', 'Themes')
 
 @section('header_actions')
-    <button type="button"
-        class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm text-sm font-medium cursor-not-allowed opacity-75"
-        title="Coming soon">
+    <a href="{{ route('admin.themes.create') }}"
+        class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm text-sm font-medium">
         Upload Theme
-    </button>
+    </a>
 @endsection
 
 @section('content')
@@ -74,6 +73,16 @@
                             </form>
                         @else
                             <span class="text-green-600 font-medium cursor-default">Installed</span>
+                        @endif
+
+                        @if(!$theme['active'])
+                            <form action="{{ route('admin.themes.delete') }}" method="POST" class="inline-block ml-2"
+                                onsubmit="return confirm('Are you sure you want to delete this theme?');">
+                                @csrf
+                                <input type="hidden" name="theme_id" value="{{ $theme['id'] }}">
+                                <button type="submit"
+                                    class="text-red-600 hover:text-red-900 font-semibold cursor-pointer">Delete</button>
+                            </form>
                         @endif
                     </td>
                 </tr>
