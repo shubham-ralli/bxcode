@@ -90,7 +90,7 @@ class MediaController extends Controller
 
             $year = date('Y');
             $month = date('m');
-            $directory = "uploads/{$year}/{$month}";
+            $directory = "{$year}/{$month}";
 
             // Generate filename with counter if exists
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
@@ -163,55 +163,45 @@ class MediaController extends Controller
     /**
      * Handle TinyMCE Image Upload
      */
-    public function upload(Request $request)
+    public function tinyMceUpload(Request $request)
     {
-        // TinyMCE sends file as 'file' by default, or we can configure it.
-        // Let's assume standard form data
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-
-            // Reusing logic from store, but simplified for API
             $year = date('Y');
             $month = date('m');
             $directory = "{$year}/{$month}";
-            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $extension = $file->getClientOriginalExtension();
-            $filename = Str::slug($originalName) . '.' . $extension;
+            $filename = uniqid() . '_' . $file->getClientOriginalName();
 
-            $counter = 1;
+            // Check if file exists
             while (Storage::disk('uploads')->exists("{$directory}/{$filename}")) {
-                $filename = Str::slug($originalName) . '-' . $counter . '.' . $extension;
-                $counter++;
+                $filename = uniqid() . '_' . $file->getClientOriginalName();
             }
 
+            // Store file
             $path = $file->storeAs($directory, $filename, 'uploads');
 
-            $media = Media::create([
-                'filename' => $filename,
-                'path' => '/uploads/' . $directory . '/' . $filename,
-                'mime_type' => $file->getMimeType(),
-                'size' => $file->getSize(),
-                'title' => $originalName,
-            ]);
-
-            // TinyMCE expects { location: 'url' }
-            // We also send ID for frontend manipulation
-            return response()->json([
-                'location' => asset($media->path), // asset() handles public path
-                'id' => $media->id
-            ]);
+            if ($path) {
+                return response()->json([
+                    'location' => '/uploads/' . $directory . '/' . $filename
+                ]);
+            }
         }
 
-        return response()->json(['error' => 'No file uploaded'], 400);
+        return response()->json(['error' => 'Upload failed'], 500);
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy(Media $media)
     {
-        $media = Media::findOrFail($id);
-        $this->deleteMediaFile($media);
+        // Remove prefixes to get relative path for 'uploads' disk
+        $relativePath = str_replace(['/uploads/', 'uploads/'], '', $media->path);
+
+        if (Storage::disk('uploads')->exists($relativePath)) {
+            Storage::disk('uploads')->delete($relativePath);
+        }
+
         $media->delete();
 
-        if ($request->wantsJson()) {
+        if (request()->wantsJson()) {
             return response()->json(['success' => true]);
         }
 
@@ -229,26 +219,15 @@ class MediaController extends Controller
         $mediaItems = Media::whereIn('id', $ids)->get();
 
         foreach ($mediaItems as $media) {
-            $this->deleteMediaFile($media);
+            // Remove prefixes to get relative path for 'uploads' disk
+            $relativePath = str_replace(['/uploads/', 'uploads/'], '', $media->path);
+
+            if (Storage::disk('uploads')->exists($relativePath)) {
+                Storage::disk('uploads')->delete($relativePath);
+            }
             $media->delete();
         }
 
         return response()->json(['success' => true, 'message' => 'Selected items deleted successfully']);
-    }
-
-    private function deleteMediaFile($media)
-    {
-        // Remove valid path prefix to delete from storage
-        $relativePath = str_replace(['/uploads/', 'uploads/'], '', $media->path);
-
-        if (Storage::disk('uploads')->exists($relativePath)) {
-            Storage::disk('uploads')->delete($relativePath);
-        }
-
-        // Also try old 'public' disk for legacy files
-        $oldPath = str_replace(['/public/storage/', '/storage/'], '', $media->path);
-        if (Storage::disk('public')->exists($oldPath)) {
-            Storage::disk('public')->delete($oldPath);
-        }
     }
 }

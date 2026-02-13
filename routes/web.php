@@ -136,6 +136,20 @@ Route::get('/themes/{theme}/{file}', function ($theme, $file) {
     abort(404);
 })->where('file', '.*')->name('theme.asset');
 
+// Serve Uploads via Route (No public folder)
+Route::get('/uploads/{path}', function ($path) {
+    // Security: Prevent directory traversal
+    if (str_contains($path, '..'))
+        abort(404);
+
+    $absolutePath = storage_path("app/public/{$path}");
+
+    if (file_exists($absolutePath)) {
+        return response()->file($absolutePath);
+    }
+    abort(404);
+})->where('path', '.*')->name('uploads.serve');
+
 // Sitemap Stylesheet
 Route::get('/sitemap-style.xsl', function () {
     return response()->file(resource_path('views/plugins/Seo/sitemap-style.xsl'), [
