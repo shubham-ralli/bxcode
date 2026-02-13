@@ -167,26 +167,44 @@ class MediaController extends Controller
     /**
      * Handle TinyMCE Image Upload
      */
-    public function tinyMceUpload(Request $request)
+    /**
+     * Handle TinyMCE Image Upload
+     */
+    public function upload(Request $request)
     {
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $year = date('Y');
             $month = date('m');
             $directory = "{$year}/{$month}";
-            $filename = uniqid() . '_' . $file->getClientOriginalName();
 
-            // Check if file exists
+            // Generate filename with counter if exists
+            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = $file->getClientOriginalExtension();
+            $filename = Str::slug($originalName) . '.' . $extension;
+
+            $counter = 1;
             while (Storage::disk('uploads')->exists("{$directory}/{$filename}")) {
-                $filename = uniqid() . '_' . $file->getClientOriginalName();
+                $filename = Str::slug($originalName) . '-' . $counter . '.' . $extension;
+                $counter++;
             }
 
             // Store file
             $path = $file->storeAs($directory, $filename, 'uploads');
 
             if ($path) {
+                // Create Media Record
+                $media = Media::create([
+                    'filename' => $filename,
+                    'path' => '/uploads/' . $directory . '/' . $filename,
+                    'mime_type' => $file->getMimeType(),
+                    'size' => $file->getSize(),
+                    'title' => $originalName,
+                ]);
+
                 return response()->json([
-                    'location' => '/uploads/' . $directory . '/' . $filename
+                    'location' => '/uploads/' . $directory . '/' . $filename,
+                    'id' => $media->id
                 ]);
             }
         }
